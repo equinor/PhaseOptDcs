@@ -7,8 +7,8 @@ User's manual
 Introduction
 ------------
 
-Getting Aga8Calc
-----------------
+Getting PhaseOptDcs
+-------------------
 
 The latest release version of PhaseOptDcs can be downloaded from:
 
