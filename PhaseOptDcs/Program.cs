@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Globalization;
+using Topshelf;
 
 namespace PhaseOptDcs
 {
@@ -10,6 +8,20 @@ namespace PhaseOptDcs
     {
         static void Main()
         {
+            var exitCode = HostFactory.Run(x =>
+            {
+                x.Service<PhaseOptDcsService>(s =>
+                {
+                    s.ConstructUsing(PhaseOptDcsService => new PhaseOptDcsService());
+                    s.WhenStarted(PhaseOptDcsService => PhaseOptDcsService.Start());
+                    s.WhenStopped(PhaseOptDcsService => PhaseOptDcsService.Stop());
+                });
+
+                x.SetServiceName("PhaseOptDcs");
+            });
+
+            int exitCodeValue = (int)Convert.ChangeType(exitCode, exitCode.GetTypeCode(), CultureInfo.InvariantCulture);
+            Environment.ExitCode = exitCodeValue;
         }
     }
 }

@@ -13,7 +13,13 @@ namespace Tests
         public void GeneratePhaseOptDcsConfiguration()
         {
             // Stream 0
-            PhaseOptDcs.ConfigModel config = new PhaseOptDcs.ConfigModel();
+            PhaseOptDcs.ConfigModel config = new PhaseOptDcs.ConfigModel
+            {
+                OpcUrl = "opc.tcp://localhost:62548/Quickstarts/DataAccessServer",
+                OpcUser = "user",
+                OpcPassword = "password",
+                OpcEndpoint = "xxx"
+            };
             config.Streams.Item.Add(new PhaseOptDcs.Stream { Name = "Statpipe" });
             config.Streams.Item[0].Composition.Item.Add(new PhaseOptDcs.Component { Name = "CO2", Id = 1, Tag = "31AI0157A_K", ScaleFactor = 1.0 });
             config.Streams.Item[0].Composition.Item.Add(new PhaseOptDcs.Component { Name = "N2", Id = 2, Tag = "31AI0157A_J", ScaleFactor = 1.0 });

@@ -9,6 +9,14 @@ namespace PhaseOptDcs
     public class ConfigModel
     {
         [XmlElement]
+        public string OpcUrl { get; set; }
+        [XmlElement]
+        public string OpcUser { get; set; }
+        [XmlElement]
+        public string OpcPassword { get; set; }
+        [XmlElement]
+        public string OpcEndpoint { get; set; }
+        [XmlElement]
         public StreamList Streams { get; set; } = new StreamList();
 
         public static ConfigModel ReadConfig(string file)
