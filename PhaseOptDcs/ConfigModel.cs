@@ -15,8 +15,6 @@ namespace PhaseOptDcs
         [XmlElement]
         public string OpcPassword { get; set; }
         [XmlElement]
-        public string OpcEndpoint { get; set; }
-        [XmlElement]
         public StreamList Streams { get; set; } = new StreamList();
 
         public static ConfigModel ReadConfig(string file)
@@ -32,7 +30,6 @@ namespace PhaseOptDcs
             XmlSerializer configSerializer = new XmlSerializer(typeof(ConfigModel));
             ConfigModel result = (ConfigModel)configSerializer.Deserialize(configFileReader);
             configFileReader.Close();
-            configFileReader.Dispose();
 
             return result;
         }
@@ -61,6 +58,31 @@ namespace PhaseOptDcs
         public CompositionList() { Item = new List<Component>(); }
         [XmlElement("Component")]
         public List<Component> Item { get; }
+
+        public double[] GetValues()
+        {
+            List<double> vs = new List<double>();
+
+            foreach (var component in Item)
+            {
+                vs.Add(component.Value);
+            }
+
+            return vs.ToArray();
+        }
+
+        public Int32[] GetIds()
+        {
+            List<Int32> vs = new List<Int32>();
+
+            foreach (var component in Item)
+            {
+                vs.Add(component.Id);
+            }
+
+            return vs.ToArray();
+        }
+
     }
 
     public class Component
@@ -88,5 +110,10 @@ namespace PhaseOptDcs
         public string TemperatureTag { get; set; }
         [XmlAttribute]
         public string PressureTag { get; set; }
+
+        [XmlIgnore]
+        public double Pressure { get; set; }
+        [XmlIgnore]
+        public double Temperature { get; set; }
     }
 }

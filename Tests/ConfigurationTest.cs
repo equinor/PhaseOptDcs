@@ -18,7 +18,6 @@ namespace Tests
                 OpcUrl = "opc.tcp://localhost:62548/Quickstarts/DataAccessServer",
                 OpcUser = "user",
                 OpcPassword = "password",
-                OpcEndpoint = "xxx"
             };
             config.Streams.Item.Add(new PhaseOptDcs.Stream { Name = "Statpipe" });
             config.Streams.Item[0].Composition.Item.Add(new PhaseOptDcs.Component { Name = "CO2", Id = 1, Tag = "31AI0157A_K", ScaleFactor = 1.0 });
@@ -41,13 +40,56 @@ namespace Tests
             XmlSerializer configSerializer = new XmlSerializer(typeof(PhaseOptDcs.ConfigModel));
             configSerializer.Serialize(writer, config);
             writer.Close();
-            writer.Dispose();
 
             string file = AppDomain.CurrentDomain.BaseDirectory.ToString(CultureInfo.InvariantCulture) + "\\phaseopt.xml";
             PhaseOptDcs.ConfigModel readConfig = PhaseOptDcs.ConfigModel.ReadConfig(file);
 
             Assert.AreEqual("Statpipe", readConfig.Streams.Item[0].Name);
             Assert.AreEqual("Åsgard", readConfig.Streams.Item[1].Name);
+        }
+
+        [TestMethod]
+        public void ConfigModelGetValues()
+        {
+
+            PhaseOptDcs.CompositionList composition = new PhaseOptDcs.CompositionList();
+
+            Int32 length = 35;
+
+            for (int i = 0; i < length; i++)
+            {
+                composition.Item.Add(new PhaseOptDcs.Component { Name = "CO2", Id = 1, Tag = "31AI0157A_K", ScaleFactor = 1.0 });
+                composition.Item[i].Value = Convert.ToDouble(i);
+            }
+
+            double[] values = composition.GetValues();
+
+            for (int i = 0; i < length; i++)
+            {
+                Assert.AreEqual(values[i], Convert.ToDouble(i), 1.0e-13);
+            }
+        }
+
+        [TestMethod]
+        public void ConfigModelGetIds()
+        {
+
+            PhaseOptDcs.CompositionList composition = new PhaseOptDcs.CompositionList();
+
+            Int32 length = 35;
+
+            for (int i = 0; i < length; i++)
+            {
+                composition.Item.Add(new PhaseOptDcs.Component { Name = "CO2", Id = 1, Tag = "31AI0157A_K", ScaleFactor = 1.0 });
+                composition.Item[i].Id = i;
+            }
+
+            Int32[] ids = composition.GetIds();
+
+            for (int i = 0; i < length; i++)
+            {
+                Assert.AreEqual(ids[i], i);
+            }
         }
     }
 }

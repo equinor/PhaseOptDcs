@@ -6,7 +6,6 @@
         <xsd:element name="OpcUrl" type="xsd:string" />
         <xsd:element name="OpcUser" type="xsd:string" />
         <xsd:element name="OpcPassword" type="xsd:string" />
-        <xsd:element name="OpcEndpoint" type="xsd:string" />
         <xsd:element name="Streams">
           <xsd:complexType>
             <xsd:sequence>
