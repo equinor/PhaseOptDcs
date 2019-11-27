@@ -11,36 +11,36 @@ Project Structure
     scale 1
 
     class ConfigModel {
-        +Streams
-        +ReadConfig(String)
+        +StreamList Streams
+        +ConfigModel ReadConfig(string)
     }
 
     class Stream {
-        +Composition
-        +Cricondenbar
-        +Name
+        +CompositionList Composition
+        +Cricondenbar Cricondenbar
+        +string Name
     }
 
     class Component {
-        +Id
-        +Name
-        +ScaleFactor
-        +Tag
-        +Value
-        +GetScaledValue()
+        +int Id
+        +string Name
+        +double ScaleFactor
+        +string Tag
+        +double Value
+        +double GetScaledValue()
     }
 
     class Cricondenbar {
-        +PressureTag
-        +TemperatureTag
+        +string PressureTag
+        +string TemperatureTag
     }
 
     class CompositionList {
-        +Item
+        +List<Component> Item
     }
 
     class StreamList {
-        +Item
+        +List<Stream> Item
     }
 
     @enduml
