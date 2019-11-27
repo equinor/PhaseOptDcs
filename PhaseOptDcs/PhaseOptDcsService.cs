@@ -64,24 +64,28 @@ namespace PhaseOptDcs
 
             Parallel.For(0, umrCallerList.Count, i =>
                 {
-                    try
+                    if (!string.IsNullOrEmpty(config.Streams.Item[i].Cricondenbar.PressureTag) &&
+                        !string.IsNullOrEmpty(config.Streams.Item[i].Cricondenbar.TemperatureTag) )
                     {
-                        double[] result = umrCallerList[i].Cricondenbar();
-                        config.Streams.Item[i].Cricondenbar.Pressure = result[0];
-                        config.Streams.Item[i].Cricondenbar.Temperature = result[1];
-                        logger.Debug(CultureInfo.InvariantCulture,
-                            "Cricondenbar pressure Value: {0} Tag: \"{1}\"",
-                            config.Streams.Item[i].Cricondenbar.Pressure,
-                            config.Streams.Item[i].Cricondenbar.PressureTag);
+                        try
+                        {
+                            double[] result = umrCallerList[i].Cricondenbar();
+                            config.Streams.Item[i].Cricondenbar.Pressure = result[0];
+                            config.Streams.Item[i].Cricondenbar.Temperature = result[1];
+                            logger.Debug(CultureInfo.InvariantCulture,
+                                "Cricondenbar pressure Value: {0} Tag: \"{1}\"",
+                                config.Streams.Item[i].Cricondenbar.Pressure,
+                                config.Streams.Item[i].Cricondenbar.PressureTag);
 
-                        logger.Debug(CultureInfo.InvariantCulture,
-                            "Cricondenbar temperature Value: {0} Tag: \"{1}\"",
-                            config.Streams.Item[i].Cricondenbar.Temperature,
-                            config.Streams.Item[i].Cricondenbar.TemperatureTag);
-                    }
-                    catch (System.ComponentModel.Win32Exception e)
-                    {
-                        logger.Error(e, "Error calculating cricondenbar.");
+                            logger.Debug(CultureInfo.InvariantCulture,
+                                "Cricondenbar temperature Value: {0} Tag: \"{1}\"",
+                                config.Streams.Item[i].Cricondenbar.Temperature,
+                                config.Streams.Item[i].Cricondenbar.TemperatureTag);
+                        }
+                        catch (System.ComponentModel.Win32Exception e)
+                        {
+                            logger.Error(e, "Error calculating cricondenbar.");
+                        }
                     }
                 });
         }
