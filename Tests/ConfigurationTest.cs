@@ -10,7 +10,7 @@ namespace Tests
     public class ConfigurationTest
     {
         [TestMethod]
-        public void GeneratePhaseOptDcsConfiguration()
+        public void GenerateAndReadConfigModel()
         {
             // Stream 0
             PhaseOptDcs.ConfigModel config = new PhaseOptDcs.ConfigModel
@@ -47,9 +47,13 @@ namespace Tests
             Assert.AreEqual("Statpipe", readConfig.Streams.Item[0].Name);
             Assert.AreEqual("Åsgard", readConfig.Streams.Item[1].Name);
         }
+    }
 
+    [TestClass]
+    public class UnitTests
+    {
         [TestMethod]
-        public void ConfigModelGetValues()
+        public void CompositionList_GetValues()
         {
 
             PhaseOptDcs.CompositionList composition = new PhaseOptDcs.CompositionList();
@@ -71,7 +75,7 @@ namespace Tests
         }
 
         [TestMethod]
-        public void ConfigModelGetIds()
+        public void CompositionList_GetIds()
         {
 
             PhaseOptDcs.CompositionList composition = new PhaseOptDcs.CompositionList();
@@ -90,6 +94,23 @@ namespace Tests
             {
                 Assert.AreEqual(ids[i], i);
             }
+        }
+
+        [TestMethod]
+        public void Component_GetScaledValue()
+        {
+            PhaseOptDcs.Component component = new PhaseOptDcs.Component
+            {
+                Id = 101,
+                Name = "C3",
+                ScaleFactor = 3.14,
+                Tag = "AI0001C",
+                Value = 6.822
+            };
+
+            Assert.AreEqual(21.42108, component.GetScaledValue(), 1.0e-10);
+            component.Value = 95.881;
+            Assert.AreEqual(301.06634, component.GetScaledValue(), 1.0e-10);
         }
     }
 }
