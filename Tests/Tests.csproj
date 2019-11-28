@@ -230,7 +230,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConfigurationTest.cs" />
+    <Compile Include="Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
