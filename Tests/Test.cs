@@ -112,5 +112,38 @@ namespace Tests
             component.Value = 95.881;
             Assert.AreEqual(301.06634, component.GetScaledValue(), 1.0e-10);
         }
+
+        private readonly double[] composition =
+        {
+            0.023176439, 0.006907786, 0.831210139, 0.077432143, 0.038859448,
+            0.005465126, 0.009835248, 0.002111395, 0.002150455, 0.000666455,
+            0.000214464, 0.000498599, 0.000200478, 0.000647215, 0.000163487,
+            4.15516E-05, 0.000254571, 0.000100149, 1.68092E-05, 1.55526E-05,
+            2.39625E-05, 8.52431E-06
+        };
+
+        private readonly int[] ids =
+        {
+            1, 2, 101, 201, 301, 401, 402, 503, 504, 603, 604, 605,
+            701, 606, 608, 801, 707, 710, 901, 806, 809, 1016
+        };
+
+        [TestMethod]
+        public void UMROL_Cricondenbar()
+        {
+            PhaseOptDcs.UMROL uMROL = new PhaseOptDcs.UMROL(ids, composition);
+
+            double[] expected = { 102.70644183416010, -13.831775300562015 };
+            // bara and K
+            double[] result = uMROL.Cricondenbar(0);
+            Assert.AreEqual(expected[0], result[0], 1.0e-10);
+            Assert.AreEqual(expected[1] + 273.15, result[1], 1.0e-5);
+
+            // barg and °C
+            result = uMROL.Cricondenbar(1);
+            Assert.AreEqual(expected[0] - 1.01325, result[0], 1.0e-10);
+            Assert.AreEqual(expected[1], result[1], 1.0e-5);
+
+        }
     }
 }
