@@ -3,11 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace PhaseOptDcs
 {
     class PhaseOptDcsService : IDisposable
     {
+        private readonly Timer timer;
         private readonly ConfigModel config;
         private readonly OpcClient opcClient;
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
@@ -27,6 +29,9 @@ namespace PhaseOptDcs
                 throw;
             }
 
+            timer = new Timer(20_000.0) { AutoReset = true, SynchronizingObject = null };
+            timer.Elapsed += Worker;
+
             opcClient = new OpcClient(config.OpcUrl, config.OpcUser, config.OpcPassword);
         }
 
@@ -39,10 +44,10 @@ namespace PhaseOptDcs
         {
             logger.Info("Starting service.");
             await opcClient.Connect().ConfigureAwait(false);
-            Worker();
+            timer.Start();
         }
 
-        private void Worker()
+        private void Worker(object sender, ElapsedEventArgs ea)
         {
             List<UMROL> umrCallerList = new List<UMROL>();
 
@@ -153,6 +158,8 @@ namespace PhaseOptDcs
         public void Stop()
         {
             logger.Info("Stopping service.");
+            timer.Stop();
+            timer.Dispose();
             opcClient.DisConnect();
         }
     }
