@@ -38,6 +38,7 @@ namespace PhaseOptDcs
         public void Dispose()
         {
             opcClient.Dispose();
+            timer.Dispose();
         }
 
         public async void Start()
@@ -50,36 +51,61 @@ namespace PhaseOptDcs
         private void Worker(object sender, ElapsedEventArgs ea)
         {
             List<UMROL> umrCallerList = new List<UMROL>();
+            int it = 0;
 
-            logger.Info("Reading composition.");
+            NodeIdCollection nodes = new NodeIdCollection();
+            List<Type> types = new List<Type>();
+            List<object> result = new List<object>();
+            List<ServiceResult> errors = new List<ServiceResult>();
+
+            // Make a list of all the OPC item that we want to read
             foreach (var stream in config.Streams.Item)
             {
-                logger.Info(CultureInfo.InvariantCulture, "Processing stream \"{0}\"", stream.Name);
-                logger.Info(CultureInfo.InvariantCulture, "Reading composition \"{0}\"", stream.Name);
                 foreach (var component in stream.Composition.Item)
                 {
-                    DataValue dataValue = opcClient.OpcSession.ReadValue(component.Tag);
-                    component.Value = Convert.ToDouble(dataValue.Value, CultureInfo.InvariantCulture);
-                    logger.Debug(CultureInfo.InvariantCulture,
-                        "Component Value: {0} Name: {1} Id: {2} Tag: \"{3}\"",
-                        component.GetScaledValue(), component.Name, component.Id, component.Tag);
+                    nodes.Add(component.Tag); types.Add(typeof(object));
                 }
 
-                if (stream.LiquidDropouts.Item.Count > 0)
-                {
-                    logger.Info(CultureInfo.InvariantCulture, "Reading liquid dropout inputs \"{0}\"", stream.Name);
-                }
                 foreach (var dropout in stream.LiquidDropouts.Item)
                 {
-                    DataValue dataValue = opcClient.OpcSession.ReadValue(dropout.WorkingPoint.PressureTag);
-                    dropout.WorkingPoint.Pressure = Convert.ToDouble(dataValue.Value, CultureInfo.InvariantCulture);
-                    logger.Debug(CultureInfo.InvariantCulture, "Pressure: {0} Tag: \"{1}\"",
-                        dropout.WorkingPoint.Pressure, dropout.WorkingPoint.PressureTag);
+                    nodes.Add(dropout.WorkingPoint.PressureTag); types.Add(typeof(object));
+                    nodes.Add(dropout.WorkingPoint.TemperatureTag); types.Add(typeof(object));
+                }
+            }
 
-                    dataValue = opcClient.OpcSession.ReadValue(dropout.WorkingPoint.TemperatureTag);
-                    dropout.WorkingPoint.Temperature = Convert.ToDouble(dataValue.Value, CultureInfo.InvariantCulture);
-                    logger.Debug(CultureInfo.InvariantCulture, "Temperature: {0} Tag: \"{1}\"",
-                        dropout.WorkingPoint.Temperature, dropout.WorkingPoint.TemperatureTag);
+            foreach (var item in nodes)
+            {
+                logger.Debug(CultureInfo.InvariantCulture, "Item to read: \"{0}\"", item.ToString());
+            }
+
+            // Read all of the inputs
+            opcClient.OpcSession.ReadValues(nodes, types, out result, out errors);
+
+            for (int n = 0; n < nodes.Count; n++)
+            {
+                logger.Debug(CultureInfo.InvariantCulture, "Item: \"{0}\" Value: \"{1}\" Status: \"{2}\"",
+                    nodes[n].ToString(), result[n], errors[n].StatusCode.ToString());
+            }
+
+            foreach (var stream in config.Streams.Item)
+            {
+                foreach (var component in stream.Composition.Item)
+                {
+                    component.Value = Convert.ToDouble(result[it++], CultureInfo.InvariantCulture);
+                    logger.Debug(CultureInfo.InvariantCulture,
+                        "Stream: \"{0}\" Component Value: {1} Name: {2} Id: {3} Tag: \"{4}\"",
+                        stream.Name, component.GetScaledValue(), component.Name, component.Id, component.Tag);
+                }
+
+                foreach (var dropout in stream.LiquidDropouts.Item)
+                {
+                    dropout.WorkingPoint.Pressure = Convert.ToDouble(result[it++], CultureInfo.InvariantCulture);
+                    logger.Debug(CultureInfo.InvariantCulture, "Stream: \"{0}\" Working point Pressure: {1} Tag: \"{2}\"",
+                        stream.Name, dropout.WorkingPoint.Pressure, nodes[it].ToString());
+
+                    dropout.WorkingPoint.Temperature = Convert.ToDouble(result[it++], CultureInfo.InvariantCulture);
+                    logger.Debug(CultureInfo.InvariantCulture, "Stream: \"{0}\" Working point Temperature: {1} Tag: \"{2}\"",
+                        stream.Name, dropout.WorkingPoint.Temperature, dropout.WorkingPoint.TemperatureTag);
 
                 }
 
@@ -93,16 +119,18 @@ namespace PhaseOptDcs
                     {
                         try
                         {
-                            double[] result = umrCallerList[i].Cricondenbar();
-                            config.Streams.Item[i].Cricondenbar.Pressure = result[0];
-                            config.Streams.Item[i].Cricondenbar.Temperature = result[1];
+                            double[] res = umrCallerList[i].Cricondenbar();
+                            config.Streams.Item[i].Cricondenbar.Pressure = res[0];
+                            config.Streams.Item[i].Cricondenbar.Temperature = res[1];
                             logger.Debug(CultureInfo.InvariantCulture,
-                                "Cricondenbar pressure Value: {0} Tag: \"{1}\"",
+                                "Stream: \"{0}\" Cricondenbar pressure Value: {1} Tag: \"{2}\"",
+                                config.Streams.Item[i].Name,
                                 config.Streams.Item[i].Cricondenbar.Pressure,
                                 config.Streams.Item[i].Cricondenbar.PressureTag);
 
                             logger.Debug(CultureInfo.InvariantCulture,
-                                "Cricondenbar temperature Value: {0} Tag: \"{1}\"",
+                                "Stream: \"{0}\" Cricondenbar temperature Value: {1} Tag: \"{2}\"",
+                                config.Streams.Item[i].Name, 
                                 config.Streams.Item[i].Cricondenbar.Temperature,
                                 config.Streams.Item[i].Cricondenbar.TemperatureTag);
                         }
@@ -159,7 +187,6 @@ namespace PhaseOptDcs
         {
             logger.Info("Stopping service.");
             timer.Stop();
-            timer.Dispose();
             opcClient.DisConnect();
         }
     }
