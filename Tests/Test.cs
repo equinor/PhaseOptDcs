@@ -1,8 +1,8 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Globalization;
 using System.Xml;
 using System.Xml.Serialization;
-using System.Globalization;
 
 namespace Tests
 {
@@ -24,6 +24,11 @@ namespace Tests
             config.Streams.Item[0].Composition.Item.Add(new PhaseOptDcs.Component { Name = "N2", Id = 2, Tag = "31AI0157A_J", ScaleFactor = 1.0 });
             config.Streams.Item[0].Cricondenbar.TemperatureTag = "31TY0157_A";
             config.Streams.Item[0].Cricondenbar.PressureTag = "31PY0157_A";
+            config.Streams.Item[0].LiquidDropouts.Item.Add(new PhaseOptDcs.LiquidDropout());
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint = new PhaseOptDcs.WorkingPoint
+                { Name = "Kårstø", PressureTag = "31PI0157",
+                TemperatureTag = "31TI0157", MarginTag = "31DPY0157",
+                DewPointTag = "31PY0157" };
 
             // Stream 1
             config.Streams.Item.Add(new PhaseOptDcs.Stream { Name = "Åsgard" });

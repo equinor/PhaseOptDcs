@@ -51,6 +51,8 @@ namespace PhaseOptDcs
         public CompositionList Composition { get; set; } = new CompositionList();
         [XmlElement]
         public Cricondenbar Cricondenbar { get; set; } = new Cricondenbar();
+        [XmlElement]
+        public LiquidDropoutList LiquidDropouts { get; set; } = new LiquidDropoutList();
     }
 
     public class CompositionList
@@ -115,5 +117,42 @@ namespace PhaseOptDcs
         public double Pressure { get; set; }
         [XmlIgnore]
         public double Temperature { get; set; }
+    }
+
+    public class LiquidDropoutList
+    {
+        public LiquidDropoutList() { Item = new List<LiquidDropout>(); }
+        [XmlElement("LiquidDropout")]
+        public List<LiquidDropout> Item { get; }
+    }
+    public class LiquidDropout
+    {
+        [XmlElement]
+        public WorkingPoint WorkingPoint { get; set; }
+    }
+
+    public class WorkingPoint
+    {
+        [XmlAttribute]
+        public string Name { get; set; }
+        [XmlAttribute]
+        public string PressureTag { get; set; }
+        [XmlAttribute]
+        public string TemperatureTag { get; set; }
+        [XmlAttribute]
+        public string MarginTag { get; set; }
+        [XmlAttribute]
+        public string DewPointTag { get; set; }
+        [XmlIgnore]
+        public double Pressure { get; set; }
+        [XmlIgnore]
+        public double Temperature { get; set; }
+        [XmlIgnore]
+        public double DewPoint { get; set; }
+
+        public double GetMargin()
+        {
+            return Pressure - DewPoint;
+        }
     }
 }
