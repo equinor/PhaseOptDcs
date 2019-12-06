@@ -50,9 +50,8 @@ namespace PhaseOptDcs
 
         private void Worker(object sender, ElapsedEventArgs ea)
         {
+            // One umrCaller for each stream
             List<UMROL> umrCallerList = new List<UMROL>();
-            int it = 0;
-
             NodeIdCollection nodes = new NodeIdCollection();
             List<Type> types = new List<Type>();
             List<object> result = new List<object>();
@@ -79,14 +78,23 @@ namespace PhaseOptDcs
             }
 
             // Read all of the inputs
-            opcClient.OpcSession.ReadValues(nodes, types, out result, out errors);
+            try
+            {
+                opcClient.OpcSession.ReadValues(nodes, types, out result, out errors);
+            }
+            catch (Exception e)
+            {
+                logger.Error(e, "Error reading values from OPC.");
+                return;
+            }
 
-            for (int n = 0; n < nodes.Count; n++)
+            for (int n = 0; n < result.Count; n++)
             {
                 logger.Debug(CultureInfo.InvariantCulture, "Item: \"{0}\" Value: \"{1}\" Status: \"{2}\"",
                     nodes[n].ToString(), result[n], errors[n].StatusCode.ToString());
             }
 
+            int it = 0;
             foreach (var stream in config.Streams.Item)
             {
                 foreach (var component in stream.Composition.Item)
@@ -112,6 +120,7 @@ namespace PhaseOptDcs
                 umrCallerList.Add(new UMROL(stream.Composition.GetIds(), stream.Composition.GetValues()));
             }
 
+            // Process each stream in parallel
             Parallel.For(0, umrCallerList.Count, i =>
                 {
                     if (!string.IsNullOrEmpty(config.Streams.Item[i].Cricondenbar.PressureTag) &&
@@ -145,11 +154,11 @@ namespace PhaseOptDcs
                             NodeId = config.Streams.Item[i].Cricondenbar.TemperatureTag,
                             AttributeId = Attributes.Value
                         };
-                        if (resultType == typeof(float))
+                        if ((Type)resultType == typeof(float))
                         {
                             wv.Value.Value = Convert.ToSingle(config.Streams.Item[i].Cricondenbar.Temperature);
                         }
-                        else if (resultType == typeof(double))
+                        else if ((Type)resultType == typeof(double))
                         {
                             wv.Value.Value = Convert.ToDouble(config.Streams.Item[i].Cricondenbar.Temperature);
                         }
@@ -187,6 +196,7 @@ namespace PhaseOptDcs
         {
             logger.Info("Stopping service.");
             timer.Stop();
+            System.Threading.Thread.Sleep(1_000);
             opcClient.DisConnect();
         }
     }
