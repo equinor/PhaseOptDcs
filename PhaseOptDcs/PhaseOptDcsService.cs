@@ -147,30 +147,6 @@ namespace PhaseOptDcs
                         {
                             logger.Error(e, "Error calculating cricondenbar.");
                         }
-
-                        var resultType = opcClient.OpcSession.ReadValue(config.Streams.Item[i].Cricondenbar.TemperatureTag).Value.GetType();
-                        WriteValue wv = new WriteValue
-                        {
-                            NodeId = config.Streams.Item[i].Cricondenbar.TemperatureTag,
-                            AttributeId = Attributes.Value
-                        };
-                        if ((Type)resultType == typeof(float))
-                        {
-                            wv.Value.Value = Convert.ToSingle(config.Streams.Item[i].Cricondenbar.Temperature);
-                        }
-                        else if ((Type)resultType == typeof(double))
-                        {
-                            wv.Value.Value = Convert.ToDouble(config.Streams.Item[i].Cricondenbar.Temperature);
-                        }
-
-                        wv.Value.StatusCode = StatusCodes.Good;
-
-                        WriteValueCollection wvc = new WriteValueCollection
-                        {
-                            wv
-                        };
-
-                        opcClient.OpcSession.Write(null, wvc, out StatusCodeCollection results, out DiagnosticInfoCollection diagnosticInfos);
                     }
 
                     foreach (var dropOut in config.Streams.Item[i].LiquidDropouts.Item)
@@ -190,6 +166,63 @@ namespace PhaseOptDcs
                         }
                     }
                 });
+
+            // Make a list of all the OPC item that we want to write
+            WriteValueCollection wvc = new WriteValueCollection();
+
+            foreach (var stream in config.Streams.Item)
+            {
+                WriteValue wv = new WriteValue
+                {
+                    NodeId = stream.Cricondenbar.PressureTag,
+                    AttributeId = Attributes.Value,
+                };
+                wv.Value.Value = Convert.ToSingle(stream.Cricondenbar.Pressure);
+                wvc.Add(wv);
+
+                wv = new WriteValue
+                {
+                    NodeId = stream.Cricondenbar.TemperatureTag,
+                    AttributeId = Attributes.Value,
+                };
+                wv.Value.Value = Convert.ToSingle(stream.Cricondenbar.Temperature);
+                wvc.Add(wv);
+
+                foreach (var dropout in stream.LiquidDropouts.Item)
+                {
+                    wv = new WriteValue
+                    {
+                        NodeId = dropout.WorkingPoint.MarginTag,
+                        AttributeId = Attributes.Value,
+                    };
+                    wv.Value.Value = Convert.ToSingle(dropout.WorkingPoint.GetMargin());
+                    wvc.Add(wv);
+
+                    wv = new WriteValue
+                    {
+                        NodeId = dropout.WorkingPoint.DewPointTag,
+                        AttributeId = Attributes.Value,
+                    };
+                    wv.Value.Value = Convert.ToSingle(dropout.WorkingPoint.DewPoint);
+                    wvc.Add(wv);
+                }
+            }
+
+            foreach (var item in wvc)
+            {
+                logger.Debug(CultureInfo.InvariantCulture, "Item to write: \"{0}\" Value: {1}",
+                    item.NodeId.ToString(),
+                    item.Value.Value);
+            }
+
+            try
+            {
+                opcClient.OpcSession.Write(null, wvc, out StatusCodeCollection results, out DiagnosticInfoCollection diagnosticInfos);
+            }
+            catch (Exception e)
+            {
+                logger.Error(e, "Error writing OPC items");
+            }
         }
 
         public void Stop()
