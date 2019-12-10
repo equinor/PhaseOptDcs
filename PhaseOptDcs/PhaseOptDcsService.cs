@@ -177,7 +177,8 @@ namespace PhaseOptDcs
                     NodeId = stream.Cricondenbar.PressureTag,
                     AttributeId = Attributes.Value,
                 };
-                wv.Value.Value = Convert.ToSingle(stream.Cricondenbar.Pressure);
+
+                wv.Value.Value = stream.Cricondenbar.GetPressure();
                 wvc.Add(wv);
 
                 wv = new WriteValue
@@ -185,7 +186,7 @@ namespace PhaseOptDcs
                     NodeId = stream.Cricondenbar.TemperatureTag,
                     AttributeId = Attributes.Value,
                 };
-                wv.Value.Value = Convert.ToSingle(stream.Cricondenbar.Temperature);
+                wv.Value.Value = stream.Cricondenbar.GetTemperature();
                 wvc.Add(wv);
 
                 foreach (var dropout in stream.LiquidDropouts.Item)
@@ -218,6 +219,17 @@ namespace PhaseOptDcs
             try
             {
                 opcClient.OpcSession.Write(null, wvc, out StatusCodeCollection results, out DiagnosticInfoCollection diagnosticInfos);
+
+
+                for (int i = 0; i < results.Count; i++)
+                {
+                    if (results[i].Code != 0)
+                    {
+                        logger.Error(CultureInfo.InvariantCulture, "Write result: \"{0}\" Tag: \"{1}\" Value: \"{2}\" Type: \"{3}\"",
+                            results[i].ToString(), wvc[i].NodeId, wvc[i].Value.Value, wvc[i].Value.Value.GetType().ToString());
+                    }
+
+                }
             }
             catch (Exception e)
             {

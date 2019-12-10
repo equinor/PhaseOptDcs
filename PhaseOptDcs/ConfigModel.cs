@@ -125,10 +125,46 @@ namespace PhaseOptDcs
         [XmlAttribute]
         public string PressureTag { get; set; }
 
+        [XmlAttribute]
+        public string TemperatureType { get; set; }
+        [XmlAttribute]
+        public string PressureType { get; set; }
+
         [XmlIgnore]
         public double Pressure { get; set; }
         [XmlIgnore]
         public double Temperature { get; set; }
+
+        public object GetTemperature() {
+            if (TemperatureType == "single")
+            {
+                return Convert.ToSingle(Temperature);
+            }
+            else if (TemperatureType == "double")
+            {
+                return Convert.ToDouble(Temperature);
+            }
+            else
+            {
+                return Convert.ToDouble(Temperature);
+            }
+        }
+
+        public object GetPressure()
+        {
+            if (PressureType == "single")
+            {
+                return Convert.ToSingle(Pressure);
+            }
+            else if (PressureType == "double")
+            {
+                return Convert.ToDouble(Pressure);
+            }
+            else
+            {
+                return Convert.ToDouble(Pressure);
+            }
+        }
     }
 
     public class LiquidDropoutList
@@ -154,7 +190,11 @@ namespace PhaseOptDcs
         [XmlAttribute]
         public string MarginTag { get; set; }
         [XmlAttribute]
+        public string MarginType { get; set; }
+        [XmlAttribute]
         public string DewPointTag { get; set; }
+        [XmlAttribute]
+        public string DewPointType { get; set; }
         [XmlIgnore]
         public double Pressure { get; set; }
         [XmlIgnore]

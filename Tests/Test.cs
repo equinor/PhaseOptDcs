@@ -118,6 +118,83 @@ namespace Tests
             Assert.AreEqual(301.06634, component.GetScaledValue(), 1.0e-10);
         }
 
+        [TestMethod]
+        public void Cricondenbar_GetTemperature_SingleType()
+        {
+            PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar
+            {
+                Temperature = 3.14,
+                TemperatureType = "single",
+            };
+
+            Assert.AreEqual(typeof(System.Single), cricondenbar.GetTemperature().GetType());
+            Assert.AreEqual(3.14, Convert.ToDouble(cricondenbar.GetTemperature(), CultureInfo.InvariantCulture), 1.0e-5);
+        }
+
+        [TestMethod]
+        public void Cricondenbar_GetTemperature_DoubleType()
+        {
+            PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar
+            {
+                Temperature = 3.14,
+                TemperatureType = "double",
+            };
+
+            Assert.AreEqual(typeof(System.Double), cricondenbar.GetTemperature().GetType());
+            Assert.AreEqual(3.14, Convert.ToDouble(cricondenbar.GetTemperature(), CultureInfo.InvariantCulture), 1.0e-5);
+        }
+
+        [TestMethod]
+        public void Cricondenbar_GetTemperature_DefaultType()
+        {
+            PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar
+            {
+                Temperature = 3.14,
+            };
+
+            Assert.AreEqual(typeof(System.Double), cricondenbar.GetTemperature().GetType());
+            Assert.AreEqual(3.14, Convert.ToDouble(cricondenbar.GetTemperature(), CultureInfo.InvariantCulture), 1.0e-5);
+        }
+
+        [TestMethod]
+        public void Cricondenbar_GetPressure_SingleType()
+        {
+            PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar
+            {
+                Pressure = 3.14,
+                PressureType = "single",
+            };
+
+            Assert.AreEqual(typeof(System.Single), cricondenbar.GetPressure().GetType());
+            Assert.AreEqual(3.14, Convert.ToDouble(cricondenbar.GetPressure(), CultureInfo.InvariantCulture), 1.0e-5);
+        }
+
+        [TestMethod]
+        public void Cricondenbar_GetPressure_DoubleType()
+        {
+            PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar
+            {
+                Pressure = 3.14,
+                PressureType = "double",
+            };
+
+            Assert.AreEqual(typeof(System.Double), cricondenbar.GetPressure().GetType());
+            Assert.AreEqual(3.14, Convert.ToDouble(cricondenbar.GetPressure(), CultureInfo.InvariantCulture), 1.0e-5);
+        }
+
+        [TestMethod]
+        public void Cricondenbar_GetPressure_DefaultType()
+        {
+            PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar
+            {
+                Pressure = 3.14,
+            };
+
+            Assert.AreEqual(typeof(System.Double), cricondenbar.GetPressure().GetType());
+            Assert.AreEqual(3.14, Convert.ToDouble(cricondenbar.GetPressure(), CultureInfo.InvariantCulture), 1.0e-5);
+        }
+
+
         private readonly double[] composition =
         {
             0.023176439, 0.006907786, 0.831210139, 0.077432143, 0.038859448,
