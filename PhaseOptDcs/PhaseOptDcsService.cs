@@ -50,6 +50,15 @@ namespace PhaseOptDcs
 
         private void Worker(object sender, ElapsedEventArgs ea)
         {
+            List<UMROL> umrCallerList = ReadFromOPC();
+
+            ProcessStreams(umrCallerList);
+
+            WriteToOPC();
+        }
+
+        private List<UMROL> ReadFromOPC()
+        {
             // One umrCaller for each stream
             List<UMROL> umrCallerList = new List<UMROL>();
             NodeIdCollection nodes = new NodeIdCollection();
@@ -85,7 +94,7 @@ namespace PhaseOptDcs
             catch (Exception e)
             {
                 logger.Error(e, "Error reading values from OPC.");
-                return;
+                return umrCallerList;
             }
 
             for (int n = 0; n < result.Count; n++)
@@ -120,53 +129,62 @@ namespace PhaseOptDcs
                 umrCallerList.Add(new UMROL(stream.Composition.GetIds(), stream.Composition.GetScaledValues()));
             }
 
+            return umrCallerList;
+        }
+
+        private void ProcessStreams(List<UMROL> umrCallerList)
+        {
             // Process each stream in parallel
             Parallel.For(0, umrCallerList.Count, i =>
+            {
+                if (!string.IsNullOrEmpty(config.Streams.Item[i].Cricondenbar.PressureTag) &&
+                    !string.IsNullOrEmpty(config.Streams.Item[i].Cricondenbar.TemperatureTag))
                 {
-                    if (!string.IsNullOrEmpty(config.Streams.Item[i].Cricondenbar.PressureTag) &&
-                        !string.IsNullOrEmpty(config.Streams.Item[i].Cricondenbar.TemperatureTag) )
+                    try
                     {
-                        try
-                        {
-                            double[] res = umrCallerList[i].Cricondenbar();
-                            config.Streams.Item[i].Cricondenbar.Pressure = res[0];
-                            config.Streams.Item[i].Cricondenbar.Temperature = res[1];
-                            logger.Debug(CultureInfo.InvariantCulture,
-                                "Stream: \"{0}\" Cricondenbar pressure Value: {1} Tag: \"{2}\"",
-                                config.Streams.Item[i].Name,
-                                config.Streams.Item[i].Cricondenbar.Pressure,
-                                config.Streams.Item[i].Cricondenbar.PressureTag);
+                        double[] res = umrCallerList[i].Cricondenbar();
+                        config.Streams.Item[i].Cricondenbar.Pressure = res[0];
+                        config.Streams.Item[i].Cricondenbar.Temperature = res[1];
+                        logger.Debug(CultureInfo.InvariantCulture,
+                            "Stream: \"{0}\" Cricondenbar pressure Value: {1} Tag: \"{2}\"",
+                            config.Streams.Item[i].Name,
+                            config.Streams.Item[i].Cricondenbar.Pressure,
+                            config.Streams.Item[i].Cricondenbar.PressureTag);
 
-                            logger.Debug(CultureInfo.InvariantCulture,
-                                "Stream: \"{0}\" Cricondenbar temperature Value: {1} Tag: \"{2}\"",
-                                config.Streams.Item[i].Name, 
-                                config.Streams.Item[i].Cricondenbar.Temperature,
-                                config.Streams.Item[i].Cricondenbar.TemperatureTag);
-                        }
-                        catch (System.ComponentModel.Win32Exception e)
-                        {
-                            logger.Error(e, "Error calculating cricondenbar.");
-                        }
+                        logger.Debug(CultureInfo.InvariantCulture,
+                            "Stream: \"{0}\" Cricondenbar temperature Value: {1} Tag: \"{2}\"",
+                            config.Streams.Item[i].Name,
+                            config.Streams.Item[i].Cricondenbar.Temperature,
+                            config.Streams.Item[i].Cricondenbar.TemperatureTag);
                     }
-
-                    foreach (var dropOut in config.Streams.Item[i].LiquidDropouts.Item)
+                    catch (System.ComponentModel.Win32Exception e)
                     {
-                        try
-                        {
-                            dropOut.WorkingPoint.DewPoint = umrCallerList[i].DewP(dropOut.WorkingPoint.Temperature);
-                            logger.Debug(CultureInfo.InvariantCulture,
-                                "Dew point Pressure: {0} PressureTag: \"{1}\" Temperature: {2} TemperatureTag: \"{3}\"",
-                                dropOut.WorkingPoint.DewPoint, dropOut.WorkingPoint.DewPointTag,
-                                dropOut.WorkingPoint.Temperature, dropOut.WorkingPoint.TemperatureTag);
-                        }
-                        catch (System.ComponentModel.Win32Exception e)
-                        {
-
-                            logger.Error(e, "Error calculating Dew point.");
-                        }
+                        logger.Error(e, "Error calculating cricondenbar.");
                     }
-                });
+                }
 
+                foreach (var dropOut in config.Streams.Item[i].LiquidDropouts.Item)
+                {
+                    try
+                    {
+                        dropOut.WorkingPoint.DewPoint = umrCallerList[i].DewP(dropOut.WorkingPoint.Temperature);
+                        logger.Debug(CultureInfo.InvariantCulture,
+                            "Dew point Pressure: {0} PressureTag: \"{1}\" Temperature: {2} TemperatureTag: \"{3}\"",
+                            dropOut.WorkingPoint.DewPoint, dropOut.WorkingPoint.DewPointTag,
+                            dropOut.WorkingPoint.Temperature, dropOut.WorkingPoint.TemperatureTag);
+                    }
+                    catch (System.ComponentModel.Win32Exception e)
+                    {
+
+                        logger.Error(e, "Error calculating Dew point.");
+                    }
+                }
+            });
+
+        }
+
+        private void WriteToOPC()
+        {
             // Make a list of all the OPC item that we want to write
             WriteValueCollection wvc = new WriteValueCollection();
 
@@ -235,6 +253,7 @@ namespace PhaseOptDcs
             {
                 logger.Error(e, "Error writing OPC items");
             }
+
         }
 
         public void Stop()
