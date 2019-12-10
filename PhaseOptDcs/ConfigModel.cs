@@ -73,6 +73,18 @@ namespace PhaseOptDcs
             return vs.ToArray();
         }
 
+        public double[] GetScaledValues()
+        {
+            List<double> vs = new List<double>();
+
+            foreach (var component in Item)
+            {
+                vs.Add(component.GetScaledValue());
+            }
+
+            return vs.ToArray();
+        }
+
         public Int32[] GetIds()
         {
             List<Int32> vs = new List<Int32>();

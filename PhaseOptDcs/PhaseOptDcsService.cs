@@ -117,7 +117,7 @@ namespace PhaseOptDcs
 
                 }
 
-                umrCallerList.Add(new UMROL(stream.Composition.GetIds(), stream.Composition.GetValues()));
+                umrCallerList.Add(new UMROL(stream.Composition.GetIds(), stream.Composition.GetScaledValues()));
             }
 
             // Process each stream in parallel
