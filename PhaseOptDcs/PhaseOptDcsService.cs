@@ -196,7 +196,7 @@ namespace PhaseOptDcs
                         NodeId = dropout.WorkingPoint.MarginTag,
                         AttributeId = Attributes.Value,
                     };
-                    wv.Value.Value = Convert.ToSingle(dropout.WorkingPoint.GetMargin());
+                    wv.Value.Value = dropout.WorkingPoint.GetMargin();
                     wvc.Add(wv);
 
                     wv = new WriteValue
@@ -204,7 +204,7 @@ namespace PhaseOptDcs
                         NodeId = dropout.WorkingPoint.DewPointTag,
                         AttributeId = Attributes.Value,
                     };
-                    wv.Value.Value = Convert.ToSingle(dropout.WorkingPoint.DewPoint);
+                    wv.Value.Value = dropout.WorkingPoint.GetDewPoint();
                     wvc.Add(wv);
                 }
             }

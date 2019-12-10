@@ -12,24 +12,49 @@
               <xsd:element maxOccurs="unbounded" name="Stream">
                 <xsd:complexType>
                   <xsd:sequence>
-                    <xsd:element name="Composition">
+                    <xsd:element minOccurs="1" name="Composition">
                       <xsd:complexType>
                         <xsd:sequence>
-                          <xsd:element maxOccurs="unbounded" name="Component">
+                          <xsd:element maxOccurs="100" name="Component">
                             <xsd:complexType>
                               <xsd:attribute name="Name" type="xsd:string" use="required" />
-                              <xsd:attribute name="Id" type="xsd:decimal" use="required" />
+                              <xsd:attribute name="Id" type="xsd:unsignedShort" use="required" />
                               <xsd:attribute name="Tag" type="xsd:string" use="required" />
-                              <xsd:attribute name="ScaleFactor" type="xsd:double" use="required" />
+                              <xsd:attribute name="ScaleFactor" type="xsd:decimal" use="required" />
                             </xsd:complexType>
                           </xsd:element>
                         </xsd:sequence>
                       </xsd:complexType>
                     </xsd:element>
-                    <xsd:element name="Cricondenbar">
+                    <xsd:element minOccurs="0" name="Cricondenbar">
                       <xsd:complexType>
                         <xsd:attribute name="TemperatureTag" type="xsd:string" use="required" />
+                        <xsd:attribute name="TemperatureType" type="xsd:string" use="optional" />
                         <xsd:attribute name="PressureTag" type="xsd:string" use="required" />
+                        <xsd:attribute name="PressureType" type="xsd:string" use="optional" />
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element minOccurs="0" name="LiquidDropouts">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="LiquidDropout">
+                            <xsd:complexType>
+                              <xsd:sequence>
+                                <xsd:element name="WorkingPoint">
+                                  <xsd:complexType>
+                                    <xsd:attribute name="Name" type="xsd:string" use="required" />
+                                    <xsd:attribute name="PressureTag" type="xsd:string" use="required" />
+                                    <xsd:attribute name="TemperatureTag" type="xsd:string" use="required" />
+                                    <xsd:attribute name="MarginTag" type="xsd:string" use="required" />
+                                    <xsd:attribute name="MarginType" type="xsd:string" use="optional" />
+                                    <xsd:attribute name="DewPointTag" type="xsd:string" use="required" />
+                                    <xsd:attribute name="DewPointType" type="xsd:string" use="optional" />
+                                  </xsd:complexType>
+                                </xsd:element>
+                              </xsd:sequence>
+                            </xsd:complexType>
+                          </xsd:element>
+                        </xsd:sequence>
                       </xsd:complexType>
                     </xsd:element>
                   </xsd:sequence>

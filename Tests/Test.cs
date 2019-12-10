@@ -123,12 +123,12 @@ namespace Tests
         {
             PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar
             {
-                Temperature = 3.14,
+                Temperature = 3.1415,
                 TemperatureType = "single",
             };
 
             Assert.AreEqual(typeof(System.Single), cricondenbar.GetTemperature().GetType());
-            Assert.AreEqual(3.14, Convert.ToDouble(cricondenbar.GetTemperature(), CultureInfo.InvariantCulture), 1.0e-5);
+            Assert.AreEqual(3.1415, Convert.ToDouble(cricondenbar.GetTemperature(), CultureInfo.InvariantCulture), 1.0e-5);
         }
 
         [TestMethod]
@@ -136,12 +136,12 @@ namespace Tests
         {
             PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar
             {
-                Temperature = 3.14,
+                Temperature = 3.1415,
                 TemperatureType = "double",
             };
 
             Assert.AreEqual(typeof(System.Double), cricondenbar.GetTemperature().GetType());
-            Assert.AreEqual(3.14, Convert.ToDouble(cricondenbar.GetTemperature(), CultureInfo.InvariantCulture), 1.0e-5);
+            Assert.AreEqual(3.1415, Convert.ToDouble(cricondenbar.GetTemperature(), CultureInfo.InvariantCulture), 1.0e-10);
         }
 
         [TestMethod]
@@ -149,11 +149,11 @@ namespace Tests
         {
             PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar
             {
-                Temperature = 3.14,
+                Temperature = 3.1415,
             };
 
             Assert.AreEqual(typeof(System.Double), cricondenbar.GetTemperature().GetType());
-            Assert.AreEqual(3.14, Convert.ToDouble(cricondenbar.GetTemperature(), CultureInfo.InvariantCulture), 1.0e-5);
+            Assert.AreEqual(3.1415, Convert.ToDouble(cricondenbar.GetTemperature(), CultureInfo.InvariantCulture), 1.0e-10);
         }
 
         [TestMethod]
@@ -161,12 +161,12 @@ namespace Tests
         {
             PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar
             {
-                Pressure = 3.14,
+                Pressure = 3.1415,
                 PressureType = "single",
             };
 
             Assert.AreEqual(typeof(System.Single), cricondenbar.GetPressure().GetType());
-            Assert.AreEqual(3.14, Convert.ToDouble(cricondenbar.GetPressure(), CultureInfo.InvariantCulture), 1.0e-5);
+            Assert.AreEqual(3.1415, Convert.ToDouble(cricondenbar.GetPressure(), CultureInfo.InvariantCulture), 1.0e-5);
         }
 
         [TestMethod]
@@ -174,12 +174,12 @@ namespace Tests
         {
             PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar
             {
-                Pressure = 3.14,
+                Pressure = 3.1415,
                 PressureType = "double",
             };
 
             Assert.AreEqual(typeof(System.Double), cricondenbar.GetPressure().GetType());
-            Assert.AreEqual(3.14, Convert.ToDouble(cricondenbar.GetPressure(), CultureInfo.InvariantCulture), 1.0e-5);
+            Assert.AreEqual(3.1415, Convert.ToDouble(cricondenbar.GetPressure(), CultureInfo.InvariantCulture), 1.0e-10);
         }
 
         [TestMethod]
@@ -187,13 +187,91 @@ namespace Tests
         {
             PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar
             {
-                Pressure = 3.14,
+                Pressure = 3.1415,
             };
 
             Assert.AreEqual(typeof(System.Double), cricondenbar.GetPressure().GetType());
-            Assert.AreEqual(3.14, Convert.ToDouble(cricondenbar.GetPressure(), CultureInfo.InvariantCulture), 1.0e-5);
+            Assert.AreEqual(3.1415, Convert.ToDouble(cricondenbar.GetPressure(), CultureInfo.InvariantCulture), 1.0e-10);
         }
 
+        [TestMethod]
+        public void WorkingPoint_GetMargin_SingleType()
+        {
+            PhaseOptDcs.WorkingPoint workingPoint= new PhaseOptDcs.WorkingPoint
+            {
+                MarginType = "single",
+                Pressure = 3.1415,
+                DewPoint = 1.4142,
+            };
+
+            Assert.AreEqual(typeof(System.Single), workingPoint.GetMargin().GetType());
+            Assert.AreEqual(1.7273, Convert.ToDouble(workingPoint.GetMargin(), CultureInfo.InvariantCulture), 1.0e-5);
+        }
+
+        [TestMethod]
+        public void WorkingPoint_GetMargin_DoubleType()
+        {
+            PhaseOptDcs.WorkingPoint workingPoint = new PhaseOptDcs.WorkingPoint
+            {
+                MarginType = "double",
+                Pressure = 3.1415,
+                DewPoint = 1.4142,
+            };
+
+            Assert.AreEqual(typeof(System.Double), workingPoint.GetMargin().GetType());
+            Assert.AreEqual(1.7273, Convert.ToDouble(workingPoint.GetMargin(), CultureInfo.InvariantCulture), 1.0e-10);
+        }
+
+        [TestMethod]
+        public void WorkingPoint_GetMargin_DefaultType()
+        {
+            PhaseOptDcs.WorkingPoint workingPoint = new PhaseOptDcs.WorkingPoint
+            {
+                Pressure = 3.1415,
+                DewPoint = 1.4142,
+            };
+
+            Assert.AreEqual(typeof(System.Double), workingPoint.GetMargin().GetType());
+            Assert.AreEqual(1.7273, Convert.ToDouble(workingPoint.GetMargin(), CultureInfo.InvariantCulture), 1.0e-10);
+        }
+
+        [TestMethod]
+        public void WorkingPoint_GetDewPoint_SingleType()
+        {
+            PhaseOptDcs.WorkingPoint workingPoint = new PhaseOptDcs.WorkingPoint
+            {
+                DewPointType = "single",
+                DewPoint = 1.4142,
+            };
+
+            Assert.AreEqual(typeof(System.Single), workingPoint.GetDewPoint().GetType());
+            Assert.AreEqual(1.4142, Convert.ToDouble(workingPoint.GetDewPoint(), CultureInfo.InvariantCulture), 1.0e-5);
+        }
+
+        [TestMethod]
+        public void WorkingPoint_GetDewPoint_DoubleType()
+        {
+            PhaseOptDcs.WorkingPoint workingPoint = new PhaseOptDcs.WorkingPoint
+            {
+                DewPointType = "double",
+                DewPoint = 1.4142,
+            };
+
+            Assert.AreEqual(typeof(System.Double), workingPoint.GetDewPoint().GetType());
+            Assert.AreEqual(1.4142, Convert.ToDouble(workingPoint.GetDewPoint(), CultureInfo.InvariantCulture), 1.0e-10);
+        }
+
+        [TestMethod]
+        public void WorkingPoint_GetDewPoint_DefaultType()
+        {
+            PhaseOptDcs.WorkingPoint workingPoint = new PhaseOptDcs.WorkingPoint
+            {
+                DewPoint = 1.4142,
+            };
+
+            Assert.AreEqual(typeof(System.Double), workingPoint.GetDewPoint().GetType());
+            Assert.AreEqual(1.4142, Convert.ToDouble(workingPoint.GetDewPoint(), CultureInfo.InvariantCulture), 1.0e-10);
+        }
 
         private readonly double[] composition =
         {

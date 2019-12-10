@@ -202,9 +202,37 @@ namespace PhaseOptDcs
         [XmlIgnore]
         public double DewPoint { get; set; }
 
-        public double GetMargin()
+        public object GetMargin()
         {
-            return Pressure - DewPoint;
+            double margin = Pressure - DewPoint;
+            if (MarginType == "single")
+            {
+                return Convert.ToSingle(margin);
+            }
+            else if (DewPointType == "double")
+            {
+                return Convert.ToDouble(margin);
+            }
+            else
+            {
+                return Convert.ToDouble(margin);
+            }
+        }
+
+        public object GetDewPoint()
+        {
+            if (DewPointType == "single")
+            {
+                return Convert.ToSingle(DewPoint);
+            }
+            else if (DewPointType == "double")
+            {
+                return Convert.ToDouble(DewPoint);
+            }
+            else
+            {
+                return Convert.ToDouble(DewPoint);
+            }
         }
     }
 }
