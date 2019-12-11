@@ -125,7 +125,6 @@ namespace PhaseOptDcs
                     logger.Debug(CultureInfo.InvariantCulture, "Stream: \"{0}\" Working point Temperature: {1} Unit: \"{2}\" Tag: \"{3}\"",
                         stream.Name, dropout.WorkingPoint.Temperature.Value,
                         dropout.WorkingPoint.Temperature.Unit, dropout.WorkingPoint.Temperature.Tag);
-
                 }
 
                 umrCallerList.Add(new UMROL(stream.Composition.GetIds(), stream.Composition.GetScaledValues()));
@@ -184,7 +183,6 @@ namespace PhaseOptDcs
                     }
                 }
             });
-
         }
 
         private void WriteToOPC()
@@ -243,7 +241,6 @@ namespace PhaseOptDcs
             {
                 opcClient.OpcSession.Write(null, wvc, out StatusCodeCollection results, out DiagnosticInfoCollection diagnosticInfos);
 
-
                 for (int i = 0; i < results.Count; i++)
                 {
                     if (results[i].Code != 0)
@@ -258,7 +255,6 @@ namespace PhaseOptDcs
             {
                 logger.Error(e, "Error writing OPC items");
             }
-
         }
 
         public void Stop()
