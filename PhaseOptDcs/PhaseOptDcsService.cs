@@ -13,6 +13,7 @@ namespace PhaseOptDcs
         private readonly ConfigModel config;
         private readonly OpcClient opcClient;
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private readonly object WorkerLock = new object();
 
         public PhaseOptDcsService()
         {
@@ -50,11 +51,12 @@ namespace PhaseOptDcs
 
         private void Worker(object sender, ElapsedEventArgs ea)
         {
-            List<UMROL> umrCallerList = ReadFromOPC();
-
-            ProcessStreams(umrCallerList);
-
-            WriteToOPC();
+            lock (WorkerLock)
+            {
+                List<UMROL> umrCallerList = ReadFromOPC();
+                ProcessStreams(umrCallerList);
+                WriteToOPC();
+            }
         }
 
         private List<UMROL> ReadFromOPC()
@@ -259,10 +261,16 @@ namespace PhaseOptDcs
 
         public void Stop()
         {
-            logger.Info("Stopping service.");
+            logger.Info("Stop service command received.");
             timer.Stop();
-            System.Threading.Thread.Sleep(1_000);
-            opcClient.DisConnect();
+            logger.Info("Waiting for current worker.");
+            lock (WorkerLock)
+            {
+                logger.Info("Worker is done.");
+                logger.Info("Disconnecting from OPC server.");
+                opcClient.DisConnect();
+            }
+            logger.Info("Stopping service.");
         }
     }
 }
