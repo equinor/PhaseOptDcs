@@ -8,6 +8,18 @@ namespace PhaseOptDcs
     [XmlRoot("configuration")]
     public class ConfigModel
     {
+        public enum PressureUnit : int
+        {
+            barg = 0,
+            bara = 1,
+        }
+
+        public enum TemperatureUnit : int
+        {
+            C = 0,
+            K = 1,
+        }
+
         [XmlElement]
         public string OpcUrl { get; set; }
         [XmlElement]
@@ -181,35 +193,28 @@ namespace PhaseOptDcs
 
     public class WorkingPoint
     {
+        [XmlElement]
+        public PressureMeasurement Pressure { get; set; } = new PressureMeasurement();
+        [XmlElement]
+        public TemperatureMeasurement Temperature { get; set; } = new TemperatureMeasurement();
+        [XmlElement]
+        public PressureMeasurement Margin { get; set; } = new PressureMeasurement();
+        [XmlElement]
+        public PressureMeasurement DewPoint { get; set; } = new PressureMeasurement();
+
+
+
         [XmlAttribute]
         public string Name { get; set; }
-        [XmlAttribute]
-        public string PressureTag { get; set; }
-        [XmlAttribute]
-        public string TemperatureTag { get; set; }
-        [XmlAttribute]
-        public string MarginTag { get; set; }
-        [XmlAttribute]
-        public string MarginType { get; set; }
-        [XmlAttribute]
-        public string DewPointTag { get; set; }
-        [XmlAttribute]
-        public string DewPointType { get; set; }
-        [XmlIgnore]
-        public double Pressure { get; set; }
-        [XmlIgnore]
-        public double Temperature { get; set; }
-        [XmlIgnore]
-        public double DewPoint { get; set; }
 
         public object GetMargin()
         {
-            double margin = Pressure - DewPoint;
-            if (MarginType == "single")
+            double margin = Pressure.Value - DewPoint.Value;
+            if (Margin.Type == "single")
             {
                 return Convert.ToSingle(margin);
             }
-            else if (DewPointType == "double")
+            else if (DewPoint.Type == "double")
             {
                 return Convert.ToDouble(margin);
             }
@@ -221,18 +226,83 @@ namespace PhaseOptDcs
 
         public object GetDewPoint()
         {
-            if (DewPointType == "single")
+            if (DewPoint.Type == "single")
             {
-                return Convert.ToSingle(DewPoint);
+                return Convert.ToSingle(DewPoint.Value);
             }
-            else if (DewPointType == "double")
+            else if (DewPoint.Type == "double")
             {
-                return Convert.ToDouble(DewPoint);
+                return Convert.ToDouble(DewPoint.Value);
             }
             else
             {
-                return Convert.ToDouble(DewPoint);
+                return Convert.ToDouble(DewPoint.Value);
             }
+        }
+    }
+
+    public class Measurement
+    {
+        [XmlAttribute]
+        public string Name { get; set; }
+        [XmlAttribute]
+        public string Tag { get; set; }
+        [XmlAttribute]
+        public string Type { get; set; }
+
+        [XmlIgnore]
+        public double Value { get; set; }
+    }
+
+    public class PressureMeasurement : Measurement
+    {
+        [XmlAttribute]
+        public ConfigModel.PressureUnit Unit { get; set; }
+
+        public double GetConvertedPressure(ConfigModel.PressureUnit unit)
+        {
+            // Convert to bar absolute
+            const double stdAtm = 1.01325;
+            double result = 0.0;
+            switch (unit)
+            {
+                case ConfigModel.PressureUnit.barg:
+                    result = (Value + stdAtm);
+                    break;
+                case ConfigModel.PressureUnit.bara:
+                    result = Value;
+                    break;
+                default:
+                    break;
+            }
+
+            return (result);
+        }
+    }
+
+    public class TemperatureMeasurement : Measurement
+    {
+        [XmlAttribute]
+        public ConfigModel.TemperatureUnit Unit { get; set; }
+
+        public double GetConvertedTemperature(ConfigModel.TemperatureUnit unit)
+        {
+            // Convert to K
+            const double zeroCelsius = 273.15;
+            double result = 0.0;
+            switch (unit)
+            {
+                case ConfigModel.TemperatureUnit.C:
+                    result = Value + zeroCelsius;
+                    break;
+                case ConfigModel.TemperatureUnit.K:
+                    result = Value;
+                    break;
+                default:
+                    break;
+            }
+
+            return (result);
         }
     }
 }
