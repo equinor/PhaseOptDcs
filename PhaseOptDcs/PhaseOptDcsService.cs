@@ -139,25 +139,25 @@ namespace PhaseOptDcs
             // Process each stream in parallel
             Parallel.For(0, umrCallerList.Count, i =>
             {
-                if (!string.IsNullOrEmpty(config.Streams.Item[i].Cricondenbar.PressureTag) &&
-                    !string.IsNullOrEmpty(config.Streams.Item[i].Cricondenbar.TemperatureTag))
+                if (!string.IsNullOrEmpty(config.Streams.Item[i].Cricondenbar.Pressure.Tag) &&
+                    !string.IsNullOrEmpty(config.Streams.Item[i].Cricondenbar.Temperature.Tag))
                 {
                     try
                     {
                         double[] res = umrCallerList[i].Cricondenbar();
-                        config.Streams.Item[i].Cricondenbar.Pressure = res[0];
-                        config.Streams.Item[i].Cricondenbar.Temperature = res[1];
+                        config.Streams.Item[i].Cricondenbar.Pressure.Value = res[0];
+                        config.Streams.Item[i].Cricondenbar.Temperature.Value = res[1];
                         logger.Debug(CultureInfo.InvariantCulture,
                             "Stream: \"{0}\" Cricondenbar pressure Value: {1} Tag: \"{2}\"",
                             config.Streams.Item[i].Name,
-                            config.Streams.Item[i].Cricondenbar.Pressure,
-                            config.Streams.Item[i].Cricondenbar.PressureTag);
+                            config.Streams.Item[i].Cricondenbar.Pressure.Value,
+                            config.Streams.Item[i].Cricondenbar.Pressure.Tag);
 
                         logger.Debug(CultureInfo.InvariantCulture,
                             "Stream: \"{0}\" Cricondenbar temperature Value: {1} Tag: \"{2}\"",
                             config.Streams.Item[i].Name,
-                            config.Streams.Item[i].Cricondenbar.Temperature,
-                            config.Streams.Item[i].Cricondenbar.TemperatureTag);
+                            config.Streams.Item[i].Cricondenbar.Temperature.Value,
+                            config.Streams.Item[i].Cricondenbar.Temperature.Tag);
                     }
                     catch (System.ComponentModel.Win32Exception e)
                     {
@@ -194,22 +194,23 @@ namespace PhaseOptDcs
 
             foreach (var stream in config.Streams.Item)
             {
-                WriteValue wv = new WriteValue
+                WriteValue wv = new WriteValue();
+                if (stream.Cricondenbar.Pressure.Tag != null)
                 {
-                    NodeId = stream.Cricondenbar.PressureTag,
-                    AttributeId = Attributes.Value,
-                };
+                    wv.NodeId = stream.Cricondenbar.Pressure.Tag;
+                    wv.AttributeId = Attributes.Value;
+                    wv.Value.Value = stream.Cricondenbar.GetPressure();
+                    wvc.Add(wv);
+                }
 
-                wv.Value.Value = stream.Cricondenbar.GetPressure();
-                wvc.Add(wv);
-
-                wv = new WriteValue
+                if (stream.Cricondenbar.Temperature.Tag != null)
                 {
-                    NodeId = stream.Cricondenbar.TemperatureTag,
-                    AttributeId = Attributes.Value,
-                };
-                wv.Value.Value = stream.Cricondenbar.GetTemperature();
-                wvc.Add(wv);
+                    wv = new WriteValue();
+                    wv.NodeId = stream.Cricondenbar.Temperature.Tag;
+                    wv.AttributeId = Attributes.Value;
+                    wv.Value.Value = stream.Cricondenbar.GetTemperature();
+                    wvc.Add(wv);
+                }
 
                 foreach (var dropout in stream.LiquidDropouts.Item)
                 {

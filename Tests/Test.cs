@@ -22,8 +22,8 @@ namespace Tests
             config.Streams.Item.Add(new PhaseOptDcs.Stream { Name = "Statpipe" });
             config.Streams.Item[0].Composition.Item.Add(new PhaseOptDcs.Component { Name = "CO2", Id = 1, Tag = "31AI0157A_K", ScaleFactor = 1.0 });
             config.Streams.Item[0].Composition.Item.Add(new PhaseOptDcs.Component { Name = "N2", Id = 2, Tag = "31AI0157A_J", ScaleFactor = 1.0 });
-            config.Streams.Item[0].Cricondenbar.TemperatureTag = "31TY0157_A";
-            config.Streams.Item[0].Cricondenbar.PressureTag = "31PY0157_A";
+            config.Streams.Item[0].Cricondenbar.Temperature.Tag = "31TY0157_A";
+            config.Streams.Item[0].Cricondenbar.Pressure.Tag = "31PY0157_A";
             config.Streams.Item[0].LiquidDropouts.Item.Add(new PhaseOptDcs.LiquidDropout());
             config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint = new PhaseOptDcs.WorkingPoint
                 { Name = "Kårstø" };
@@ -54,8 +54,8 @@ namespace Tests
             config.Streams.Item.Add(new PhaseOptDcs.Stream { Name = "Åsgard" });
             config.Streams.Item[1].Composition.Item.Add(new PhaseOptDcs.Component { Name = "CO2", Id = 1, Tag = "31AI0161B_K", ScaleFactor = 1.0 });
             config.Streams.Item[1].Composition.Item.Add(new PhaseOptDcs.Component { Name = "N2", Id = 2, Tag = "31AI0161B_J", ScaleFactor = 1.0 });
-            config.Streams.Item[1].Cricondenbar.TemperatureTag = "31TY0161_A";
-            config.Streams.Item[1].Cricondenbar.PressureTag = "31PY0161_A";
+            config.Streams.Item[1].Cricondenbar.Temperature.Tag = "31TY0161_A";
+            config.Streams.Item[1].Cricondenbar.Pressure.Tag = "31PY0161_A";
 
             XmlWriterSettings writerSettings = new XmlWriterSettings
             {
@@ -141,11 +141,9 @@ namespace Tests
         [TestMethod]
         public void Cricondenbar_GetTemperature_SingleType()
         {
-            PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar
-            {
-                Temperature = 3.1415,
-                TemperatureType = "single",
-            };
+            PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar();
+            cricondenbar.Temperature.Value = 3.1415;
+            cricondenbar.Temperature.Type = "single";
 
             Assert.AreEqual(typeof(System.Single), cricondenbar.GetTemperature().GetType());
             Assert.AreEqual(3.1415, Convert.ToDouble(cricondenbar.GetTemperature(), CultureInfo.InvariantCulture), 1.0e-5);
@@ -154,11 +152,9 @@ namespace Tests
         [TestMethod]
         public void Cricondenbar_GetTemperature_DoubleType()
         {
-            PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar
-            {
-                Temperature = 3.1415,
-                TemperatureType = "double",
-            };
+            PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar();
+            cricondenbar.Temperature.Value = 3.1415;
+            cricondenbar.Temperature.Type = "double";
 
             Assert.AreEqual(typeof(System.Double), cricondenbar.GetTemperature().GetType());
             Assert.AreEqual(3.1415, Convert.ToDouble(cricondenbar.GetTemperature(), CultureInfo.InvariantCulture), 1.0e-10);
@@ -167,10 +163,8 @@ namespace Tests
         [TestMethod]
         public void Cricondenbar_GetTemperature_DefaultType()
         {
-            PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar
-            {
-                Temperature = 3.1415,
-            };
+            PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar();
+            cricondenbar.Temperature.Value = 3.1415;
 
             Assert.AreEqual(typeof(System.Double), cricondenbar.GetTemperature().GetType());
             Assert.AreEqual(3.1415, Convert.ToDouble(cricondenbar.GetTemperature(), CultureInfo.InvariantCulture), 1.0e-10);
@@ -179,11 +173,10 @@ namespace Tests
         [TestMethod]
         public void Cricondenbar_GetPressure_SingleType()
         {
-            PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar
-            {
-                Pressure = 3.1415,
-                PressureType = "single",
-            };
+            PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar();
+            cricondenbar.Pressure.Value = 3.1415;
+            cricondenbar.Pressure.Type = "single";
+
 
             Assert.AreEqual(typeof(System.Single), cricondenbar.GetPressure().GetType());
             Assert.AreEqual(3.1415, Convert.ToDouble(cricondenbar.GetPressure(), CultureInfo.InvariantCulture), 1.0e-5);
@@ -192,11 +185,9 @@ namespace Tests
         [TestMethod]
         public void Cricondenbar_GetPressure_DoubleType()
         {
-            PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar
-            {
-                Pressure = 3.1415,
-                PressureType = "double",
-            };
+            PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar();
+            cricondenbar.Pressure.Value = 3.1415;
+            cricondenbar.Pressure.Type = "double";
 
             Assert.AreEqual(typeof(System.Double), cricondenbar.GetPressure().GetType());
             Assert.AreEqual(3.1415, Convert.ToDouble(cricondenbar.GetPressure(), CultureInfo.InvariantCulture), 1.0e-10);
@@ -205,10 +196,8 @@ namespace Tests
         [TestMethod]
         public void Cricondenbar_GetPressure_DefaultType()
         {
-            PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar
-            {
-                Pressure = 3.1415,
-            };
+            PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar();
+            cricondenbar.Pressure.Value = 3.1415;
 
             Assert.AreEqual(typeof(System.Double), cricondenbar.GetPressure().GetType());
             Assert.AreEqual(3.1415, Convert.ToDouble(cricondenbar.GetPressure(), CultureInfo.InvariantCulture), 1.0e-10);

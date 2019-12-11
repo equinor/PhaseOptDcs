@@ -108,7 +108,6 @@ namespace PhaseOptDcs
 
             return vs.ToArray();
         }
-
     }
 
     public class Component
@@ -132,49 +131,39 @@ namespace PhaseOptDcs
 
     public class Cricondenbar
     {
-        [XmlAttribute]
-        public string TemperatureTag { get; set; }
-        [XmlAttribute]
-        public string PressureTag { get; set; }
-
-        [XmlAttribute]
-        public string TemperatureType { get; set; }
-        [XmlAttribute]
-        public string PressureType { get; set; }
-
-        [XmlIgnore]
-        public double Pressure { get; set; }
-        [XmlIgnore]
-        public double Temperature { get; set; }
+        [XmlElement]
+        public PressureMeasurement Pressure { get; set; } = new PressureMeasurement();
+        [XmlElement]
+        public TemperatureMeasurement Temperature { get; set; } = new TemperatureMeasurement();
 
         public object GetTemperature() {
-            if (TemperatureType == "single")
+            if (Temperature.Type == "single")
             {
-                return Convert.ToSingle(Temperature);
+                return Convert.ToSingle(Temperature.Value);
             }
-            else if (TemperatureType == "double")
+            else if (Temperature.Type == "double")
             {
-                return Convert.ToDouble(Temperature);
+                return Convert.ToDouble(Temperature.Value);
             }
             else
             {
-                return Convert.ToDouble(Temperature);
+                return Convert.ToDouble(Temperature.Value);
             }
         }
 
         public object GetPressure()
         {
-            if (PressureType == "single")
+            if (Pressure.Type == "single")
             {
-                return Convert.ToSingle(Pressure);
+                return Convert.ToSingle(Pressure.Value);
             }
-            else if (PressureType == "double")
+            else if (Pressure.Type == "double")
             {
-                return Convert.ToDouble(Pressure);
+                return Convert.ToDouble(Pressure.Value);
             }
             else
             {
-                return Convert.ToDouble(Pressure);
+                return Convert.ToDouble(Pressure.Value);
             }
         }
     }
@@ -193,6 +182,8 @@ namespace PhaseOptDcs
 
     public class WorkingPoint
     {
+        [XmlAttribute]
+        public string Name { get; set; }
         [XmlElement]
         public PressureMeasurement Pressure { get; set; } = new PressureMeasurement();
         [XmlElement]
@@ -201,11 +192,6 @@ namespace PhaseOptDcs
         public PressureMeasurement Margin { get; set; } = new PressureMeasurement();
         [XmlElement]
         public PressureMeasurement DewPoint { get; set; } = new PressureMeasurement();
-
-
-
-        [XmlAttribute]
-        public string Name { get; set; }
 
         public object GetMargin()
         {
