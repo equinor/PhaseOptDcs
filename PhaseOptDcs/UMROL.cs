@@ -6,9 +6,6 @@ namespace PhaseOptDcs
 {
     public class UMROL
     {
-        private const double Bara_To_Barg = 1.01325;
-        private const double Kelvin_To_Celcius = 273.15;
-
         private double[] CompositionValues;
         private Int32[] CompositionIDs;
 
@@ -101,7 +98,7 @@ namespace PhaseOptDcs
         /// </summary>
         /// <param name="Units">Sets the engineering units of the outputs. 0: use bara and Kelvin. 1: use barg and ­°C.</param>
         /// <returns>An array containing the cricondenbar pressure and temperature.</returns>
-        public double[] Cricondenbar(uint Units = 1)
+        public double[] Cricondenbar()
         {
             double[] Results = new double[2];
             double CCBT = -1.0;
@@ -109,8 +106,6 @@ namespace PhaseOptDcs
             string Arguments = "-ccd -ind 2 -id";
             string output = "";
             Process umrol = new Process();
-
-            if (Units > 1) Units = 1;
 
             foreach (int i in CompositionIDs)
             {
@@ -158,8 +153,8 @@ namespace PhaseOptDcs
             if (CCBP < 0.0) CCBP = double.NaN;
             if (CCBT < 0.0) CCBT = double.NaN;
 
-            Results[0] = (CCBP - (Units * Bara_To_Barg));
-            Results[1] = (CCBT - (Units * Kelvin_To_Celcius));
+            Results[0] = CCBP;
+            Results[1] = CCBT;
 
             return Results;
         }
@@ -169,7 +164,7 @@ namespace PhaseOptDcs
         /// </summary>
         /// <param name="Units">Sets the engineering units of the outputs. 0: use bara and Kelvin. 1: use barg and ­°C.</param>
         /// <returns>An array containing the cricondentherm pressure and temperature.</returns>
-        public double[] Cricondentherm(uint Units = 1)
+        public double[] Cricondentherm()
         {
             // Calculate the cricondentherm point
             double CCTT = -1.0;
@@ -178,8 +173,6 @@ namespace PhaseOptDcs
             string Arguments = "-ccd -ind 1 -id";
             string output = "";
             Process umrol = new Process();
-
-            if (Units > 1) Units = 1;
 
             foreach (int i in CompositionIDs)
             {
@@ -227,8 +220,8 @@ namespace PhaseOptDcs
             if (CCTP < 0.0) CCTP = double.NaN;
             if (CCTT < 0.0) CCTT = double.NaN;
 
-            Results[0] = (CCTP - (Units * Bara_To_Barg));
-            Results[1] = (CCTT - (Units * Kelvin_To_Celcius));
+            Results[0] = CCTP;
+            Results[1] = CCTT;
 
             return Results;
         }
