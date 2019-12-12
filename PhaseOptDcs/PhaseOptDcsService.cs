@@ -119,13 +119,13 @@ namespace PhaseOptDcs
                 foreach (var dropout in stream.LiquidDropouts.Item)
                 {
                     dropout.WorkingPoint.Pressure.Value = Convert.ToDouble(result[it++], CultureInfo.InvariantCulture);
-                    logger.Debug(CultureInfo.InvariantCulture, "Stream: \"{0}\" Working point Pressure: {1} Unit: \"{2}\" Tag: \"{3}\"",
-                        stream.Name, dropout.WorkingPoint.Pressure.Value,
+                    logger.Debug(CultureInfo.InvariantCulture, "Stream: \"{0}\" Working point \"{1}\": Pressure: {2} Unit: \"{3}\" Tag: \"{4}\"",
+                        stream.Name, dropout.WorkingPoint.Name, dropout.WorkingPoint.Pressure.Value, 
                         dropout.WorkingPoint.Pressure.Unit, dropout.WorkingPoint.Pressure.Tag);
 
                     dropout.WorkingPoint.Temperature.Value = Convert.ToDouble(result[it++], CultureInfo.InvariantCulture);
-                    logger.Debug(CultureInfo.InvariantCulture, "Stream: \"{0}\" Working point Temperature: {1} Unit: \"{2}\" Tag: \"{3}\"",
-                        stream.Name, dropout.WorkingPoint.Temperature.Value,
+                    logger.Debug(CultureInfo.InvariantCulture, "Stream: \"{0}\" Working point \"{1}\": Temperature: {2} Unit: \"{3}\" Tag: \"{4}\"",
+                        stream.Name, dropout.WorkingPoint.Name, dropout.WorkingPoint.Temperature.Value, 
                         dropout.WorkingPoint.Temperature.Unit, dropout.WorkingPoint.Temperature.Tag);
                 }
 
@@ -173,10 +173,17 @@ namespace PhaseOptDcs
                         dropOut.WorkingPoint.DewPoint.Value = umrCallerList[i]
                             .DewP(dropOut.WorkingPoint.Temperature.GetConvertedTemperature(dropOut.WorkingPoint.Temperature.Unit));
                         logger.Debug(CultureInfo.InvariantCulture,
-                            "Stream: \"{0}\" Dew point: Pressure: {1} PressureTag: \"{2}\" Temperature: {3} TemperatureTag: \"{4}\"",
-                            config.Streams.Item[i].Name,
-                            dropOut.WorkingPoint.DewPoint.Value, dropOut.WorkingPoint.DewPoint.Tag,
+                            "Stream: \"{0}\" Working point \"{1}\": Dew point: Pressure: {2} Pressure tag: \"{3}\"",
+                            config.Streams.Item[i].Name, dropOut.WorkingPoint.Name,
+                            dropOut.WorkingPoint.DewPoint.Value, dropOut.WorkingPoint.DewPoint.Tag);
+                        logger.Debug(CultureInfo.InvariantCulture,
+                            "Stream: \"{0}\" Working point \"{1}\": Dew Point: Temperature: {2} Temperature tag: \"{3}\"",
+                            config.Streams.Item[i].Name, dropOut.WorkingPoint.Name,
                             dropOut.WorkingPoint.Temperature.Value, dropOut.WorkingPoint.Temperature.Tag);
+                        logger.Debug(CultureInfo.InvariantCulture,
+                            "Stream: \"{0}\" Working point \"{1}\": Margin: {2} Margin tag: \"{3}\"",
+                            config.Streams.Item[i].Name, dropOut.WorkingPoint.Name,
+                            dropOut.WorkingPoint.GetMargin(), dropOut.WorkingPoint.Margin.Tag);
                     }
                     catch (System.ComponentModel.Win32Exception e)
                     {
