@@ -140,7 +140,7 @@ namespace PhaseOptDcs
             // Process each stream in parallel
             Parallel.For(0, umrCallerList.Count, i =>
             {
-                if (!string.IsNullOrEmpty(config.Streams.Item[i].Cricondenbar.Pressure.Tag) &&
+                if (!string.IsNullOrEmpty(config.Streams.Item[i].Cricondenbar.Pressure.Tag) ||
                     !string.IsNullOrEmpty(config.Streams.Item[i].Cricondenbar.Temperature.Tag))
                 {
                     try
