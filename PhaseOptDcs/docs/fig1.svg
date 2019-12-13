@@ -1,17 +1,68 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
   "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="5cm" height="4cm" version="1.1"
+<svg width="15cm" height="10cm" version="1.1" viewBox="0 0 1500 1000"
      xmlns="http://www.w3.org/2000/svg">
-  <desc>Four separate rectangles
-  </desc>
-    <rect x="0.5cm" y="0.5cm" width="2cm" height="1cm"/>
-    <rect x="0.5cm" y="2cm" width="1cm" height="1.5cm"/>
-    <rect x="3cm" y="0.5cm" width="1.5cm" height="2cm"/>
-    <rect x="3.5cm" y="3cm" width="1cm" height="0.5cm"/>
+  <desc>Illistrate working point, dew point and margin</desc>
 
-  <!-- Show outline of canvas using 'rect' element -->
-  <rect x=".01cm" y=".01cm" width="4.98cm" height="3.98cm"
-        fill="none" stroke="blue" stroke-width=".02cm" />
+   <defs>
+    <marker id="TriangleRight"
+      viewBox="0 0 10 10" refX="0" refY="5" 
+      markerUnits="strokeWidth"
+      markerWidth="8" markerHeight="6"
+      orient="0">
+      <path d="M 0 0 L 10 5 L 0 10 z" />
+    </marker>
+    <marker id="TriangleUp"
+      viewBox="0 0 10 10" refX="0" refY="5" 
+      markerUnits="strokeWidth"
+      markerWidth="8" markerHeight="6"
+      orient="-90">
+      <path d="M 0 0 L 10 5 L 0 10 z" />
+    </marker>
+    <marker id="TriangleDown"
+      viewBox="0 0 10 10" refX="0" refY="5" 
+      markerUnits="strokeWidth"
+      markerWidth="8" markerHeight="6"
+      orient="90">
+      <path d="M 0 0 L 10 5 L 0 10 z" />
+    </marker>
+  </defs>
+
+  <style type="text/css"><![CDATA[
+    .EnvelopePath { fill:none; stroke:red; stroke-width:5 }
+    .Axis { fill:none; stroke:black; stroke-width:4 }
+    .MarginLine { fill:none; stroke:blue; stroke-width:2 }
+  ]]></style>
+
+
+  <path class="EnvelopePath" d="M100,500 C600,300 1200,400 1300,900"/>
+
+  <!-- Working point -->
+  <circle cx="725" cy="160" r="8" />
+  <text x="740" y="160" font-size="40">WorkingPoint</text>
+
+  <!-- Dew point -->
+  <circle cx="725" cy="413" r="8" />
+  <text x="740" y="413" font-size="40">DewPoint</text>
+
+  <!-- Margin -->
+  <path class="MarginLine" d="M725,180 L725,393"
+    marker-start="url(#TriangleUp)"
+    marker-end="url(#TriangleDown)"/>
+  <text x="740" y="313" font-size="40">Margin</text>
+
+
+  <!-- Axis -->
+  <path class="Axis" d="M100,100 V898 H1400"
+    marker-start="url(#TriangleUp)"
+    marker-end="url(#TriangleRight)"/>
+
+  <!-- Axis labels -->
+  <text x="300" y="950" font-size="55">Temperature</text>
+  <g transform="translate(50,200) rotate(90)">
+    <text x="0" y="0" font-size="55">Pressure</text>
+  </g>
+
 
 </svg>
