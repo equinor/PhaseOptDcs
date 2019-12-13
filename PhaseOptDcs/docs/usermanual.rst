@@ -186,7 +186,7 @@ A `<Stream>` element has the following attributes:
 -   `Name` is used to identify the stream.
     This text will appear in the log file to identyfy the stream.
 
-A `<Stream>` must have one `<Composition>` element.
+A `Stream` must have one `Composition` element.
 A `<Composition>` contains one or more `<Component>` elements.
 A `<Component>`has the flollowing attributes:
 
