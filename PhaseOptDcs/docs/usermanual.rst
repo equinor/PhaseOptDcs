@@ -108,6 +108,8 @@ This will produce this output:
 Configuration
 -------------
 
+The configuration file is located in the same directory as the PhaseOptDcs.exe file.
+It is named `PhaseOptDcs.config`.
 The configuration file is structured like the example below.
 
 .. code-block:: xml
@@ -132,8 +134,7 @@ The configuration file is structured like the example below.
 
 -   `<OpcUrl>` is used to select what OPC server to connect to.
 
--   `<OpcUser>` and `<OpcPassword>` are used to select what user
-    name and password to use to connect to the OPC server.
+-   `<OpcUser>` and `<OpcPassword>` are used to select what user name and password to use to connect to the OPC server.
 
 -   `<Streams>` can contain one or more `<Stream>` elements.
 
@@ -198,8 +199,7 @@ A `<Component>` has the flollowing attributes:
 -   `Tag` is the OPC item for the component.
     The value of this item is read from the OPC server.
 
--   `ScaleFactor` is used to scale the value
-    into the proper range for the UMR calculation.
+-   `ScaleFactor` is used to scale the value into the proper range for the UMR calculation.
 
 A `<Stream>` can have one `<Cricondenbar>` element.
 By having one `<Cricondenbar>` element, PhaseOptDcs will calculate the cricondenbar point of the composition.
@@ -209,8 +209,29 @@ Or it can contian just one of them.
 The `<Pressure>` and `<Temperature>` elements have the following attributes:
 
 -   `Name`
+
 -   `Tag` is the OPC item where the value will be written to.
+
 -   `Type` is the datatype
+
+A `<Stream>` can have one or more `<LiquidDropout>` elements.
+All `<LiquidDropout>` elements must be placed inside the `<LiquidDropouts>` element.
+A `<LiquidDropout>` element can contain a `<WorkingPoint>` element, with the following sub elements:
+
+-   `<Pressure>` is the pressure of the working point.
+
+-   `<Temperature>` is the temperature of the working point.
+
+-   `<Margin>` is the pressure margin from the working point to the dew point at the working point temperature.
+    This margin is defined as `Margin = Pressure - DewPoint`.
+
+-   `<DewPoint>` is the dew point pressure at the working point temperature.
+
+.. figure:: fig1.svg
+   :alt: Figure no 1
+
+   Figure 1
+
 
 Files
 -----
