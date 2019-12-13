@@ -139,15 +139,15 @@ namespace PhaseOptDcs
         public object GetTemperature() {
             if (Temperature.Type == "single")
             {
-                return Convert.ToSingle(Temperature.Value);
+                return Convert.ToSingle(Temperature.GetUnitConverted());
             }
             else if (Temperature.Type == "double")
             {
-                return Convert.ToDouble(Temperature.Value);
+                return Convert.ToDouble(Temperature.GetUnitConverted());
             }
             else
             {
-                return Convert.ToDouble(Temperature.Value);
+                return Convert.ToDouble(Temperature.GetUnitConverted());
             }
         }
 
@@ -155,15 +155,15 @@ namespace PhaseOptDcs
         {
             if (Pressure.Type == "single")
             {
-                return Convert.ToSingle(Pressure.Value);
+                return Convert.ToSingle(Pressure.GetUnitConverted());
             }
             else if (Pressure.Type == "double")
             {
-                return Convert.ToDouble(Pressure.Value);
+                return Convert.ToDouble(Pressure.GetUnitConverted());
             }
             else
             {
-                return Convert.ToDouble(Pressure.Value);
+                return Convert.ToDouble(Pressure.GetUnitConverted());
             }
         }
     }
@@ -214,15 +214,15 @@ namespace PhaseOptDcs
         {
             if (DewPoint.Type == "single")
             {
-                return Convert.ToSingle(DewPoint.Value);
+                return Convert.ToSingle(DewPoint.GetUnitConverted());
             }
             else if (DewPoint.Type == "double")
             {
-                return Convert.ToDouble(DewPoint.Value);
+                return Convert.ToDouble(DewPoint.GetUnitConverted());
             }
             else
             {
-                return Convert.ToDouble(DewPoint.Value);
+                return Convert.ToDouble(DewPoint.GetUnitConverted());
             }
         }
     }
@@ -245,15 +245,35 @@ namespace PhaseOptDcs
         [XmlAttribute]
         public ConfigModel.PressureUnit Unit { get; set; }
 
-        public double GetConvertedPressure(ConfigModel.PressureUnit unit)
+        public double GetUMRConverted()
         {
-            // Convert to bar absolute
+            // Convert from Unit to bar absolute
             const double stdAtm = 1.01325;
             double result = 0.0;
-            switch (unit)
+            switch (Unit)
             {
                 case ConfigModel.PressureUnit.barg:
                     result = (Value + stdAtm);
+                    break;
+                case ConfigModel.PressureUnit.bara:
+                    result = Value;
+                    break;
+                default:
+                    break;
+            }
+
+            return (result);
+        }
+
+        public double GetUnitConverted()
+        {
+            // Convert from bar absolute to Unit
+            const double stdAtm = 1.01325;
+            double result = 0.0;
+            switch (Unit)
+            {
+                case ConfigModel.PressureUnit.barg:
+                    result = (Value - stdAtm);
                     break;
                 case ConfigModel.PressureUnit.bara:
                     result = Value;
@@ -271,15 +291,35 @@ namespace PhaseOptDcs
         [XmlAttribute]
         public ConfigModel.TemperatureUnit Unit { get; set; }
 
-        public double GetConvertedTemperature(ConfigModel.TemperatureUnit unit)
+        public double GetUMRConverted()
         {
-            // Convert to K
+            // Convert from Unit to K
             const double zeroCelsius = 273.15;
             double result = 0.0;
-            switch (unit)
+            switch (Unit)
             {
                 case ConfigModel.TemperatureUnit.C:
                     result = Value + zeroCelsius;
+                    break;
+                case ConfigModel.TemperatureUnit.K:
+                    result = Value;
+                    break;
+                default:
+                    break;
+            }
+
+            return (result);
+        }
+
+        public double GetUnitConverted()
+        {
+            // Convert from K to Unit
+            const double zeroCelsius = 273.15;
+            double result = 0.0;
+            switch (Unit)
+            {
+                case ConfigModel.TemperatureUnit.C:
+                    result = Value - zeroCelsius;
                     break;
                 case ConfigModel.TemperatureUnit.K:
                     result = Value;

@@ -144,6 +144,7 @@ namespace Tests
             PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar();
             cricondenbar.Temperature.Value = 3.1415;
             cricondenbar.Temperature.Type = "single";
+            cricondenbar.Temperature.Unit = PhaseOptDcs.ConfigModel.TemperatureUnit.K;
 
             Assert.AreEqual(typeof(System.Single), cricondenbar.GetTemperature().GetType());
             Assert.AreEqual(3.1415, Convert.ToDouble(cricondenbar.GetTemperature(), CultureInfo.InvariantCulture), 1.0e-5);
@@ -155,6 +156,7 @@ namespace Tests
             PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar();
             cricondenbar.Temperature.Value = 3.1415;
             cricondenbar.Temperature.Type = "double";
+            cricondenbar.Temperature.Unit = PhaseOptDcs.ConfigModel.TemperatureUnit.K;
 
             Assert.AreEqual(typeof(System.Double), cricondenbar.GetTemperature().GetType());
             Assert.AreEqual(3.1415, Convert.ToDouble(cricondenbar.GetTemperature(), CultureInfo.InvariantCulture), 1.0e-10);
@@ -165,6 +167,7 @@ namespace Tests
         {
             PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar();
             cricondenbar.Temperature.Value = 3.1415;
+            cricondenbar.Temperature.Unit = PhaseOptDcs.ConfigModel.TemperatureUnit.K;
 
             Assert.AreEqual(typeof(System.Double), cricondenbar.GetTemperature().GetType());
             Assert.AreEqual(3.1415, Convert.ToDouble(cricondenbar.GetTemperature(), CultureInfo.InvariantCulture), 1.0e-10);
@@ -176,7 +179,7 @@ namespace Tests
             PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar();
             cricondenbar.Pressure.Value = 3.1415;
             cricondenbar.Pressure.Type = "single";
-
+            cricondenbar.Pressure.Unit = PhaseOptDcs.ConfigModel.PressureUnit.bara;
 
             Assert.AreEqual(typeof(System.Single), cricondenbar.GetPressure().GetType());
             Assert.AreEqual(3.1415, Convert.ToDouble(cricondenbar.GetPressure(), CultureInfo.InvariantCulture), 1.0e-5);
@@ -188,6 +191,7 @@ namespace Tests
             PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar();
             cricondenbar.Pressure.Value = 3.1415;
             cricondenbar.Pressure.Type = "double";
+            cricondenbar.Pressure.Unit = PhaseOptDcs.ConfigModel.PressureUnit.bara;
 
             Assert.AreEqual(typeof(System.Double), cricondenbar.GetPressure().GetType());
             Assert.AreEqual(3.1415, Convert.ToDouble(cricondenbar.GetPressure(), CultureInfo.InvariantCulture), 1.0e-10);
@@ -198,6 +202,7 @@ namespace Tests
         {
             PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar();
             cricondenbar.Pressure.Value = 3.1415;
+            cricondenbar.Pressure.Unit = PhaseOptDcs.ConfigModel.PressureUnit.bara;
 
             Assert.AreEqual(typeof(System.Double), cricondenbar.GetPressure().GetType());
             Assert.AreEqual(3.1415, Convert.ToDouble(cricondenbar.GetPressure(), CultureInfo.InvariantCulture), 1.0e-10);
@@ -272,49 +277,100 @@ namespace Tests
         }
 
         [TestMethod]
-        public void TemperatureMeasurement_GetConvertedTemperature_UnitIsCelsius_ReturnKelvin()
+        public void TemperatureMeasurement_GetUMRConverted_UnitIsCelsius_ReturnKelvin()
         {
             var temperature = new PhaseOptDcs.TemperatureMeasurement();
             double testTempKelvin = 446.3;
             temperature.Value = 173.15;
+            temperature.Unit = PhaseOptDcs.ConfigModel.TemperatureUnit.C;
 
-            double resultKelvin = temperature.GetConvertedTemperature(PhaseOptDcs.ConfigModel.TemperatureUnit.C);
+            double resultKelvin = temperature.GetUMRConverted();
             Assert.AreEqual(testTempKelvin, resultKelvin, 1.0e-10);
         }
 
         [TestMethod]
-        public void TemperatureMeasurement_GetConvertedTemperature_UnitIsKelvin_ReturnKelvin()
+        public void TemperatureMeasurement_GetUMRConverted_UnitIsKelvin_ReturnKelvin()
         {
             var temperature = new PhaseOptDcs.TemperatureMeasurement();
             double testTempKelvin = 73.15;
             temperature.Value = testTempKelvin;
+            temperature.Unit = PhaseOptDcs.ConfigModel.TemperatureUnit.K;
 
-            double resultKelvin = temperature.GetConvertedTemperature(PhaseOptDcs.ConfigModel.TemperatureUnit.K);
+            double resultKelvin = temperature.GetUMRConverted();
             Assert.AreEqual(testTempKelvin, resultKelvin, 1.0e-10);
         }
 
         [TestMethod]
-        public void PressureMeasurement_GetConvertedPressure_UnitIsBarg_ReturnBara()
+        public void TemperatureMeasurement_GetUnitConverted_UnitIsCelsius_ReturnCelsius()
+        {
+            var temperature = new PhaseOptDcs.TemperatureMeasurement();
+            double testTempCelsius = -17.335;
+            temperature.Value = 255.815;
+            temperature.Unit = PhaseOptDcs.ConfigModel.TemperatureUnit.C;
+
+            double resultCelsius = temperature.GetUnitConverted();
+            Assert.AreEqual(testTempCelsius, resultCelsius, 1.0e-10);
+        }
+
+        [TestMethod]
+        public void TemperatureMeasurement_GetUnitConverted_UnitIsKelvin_ReturnKelvin()
+        {
+            var temperature = new PhaseOptDcs.TemperatureMeasurement();
+            double testTempKelvin = 255.815;
+            temperature.Value = 255.815;
+            temperature.Unit = PhaseOptDcs.ConfigModel.TemperatureUnit.K;
+
+            double resultKelvin = temperature.GetUnitConverted();
+            Assert.AreEqual(testTempKelvin, resultKelvin, 1.0e-10);
+        }
+
+        [TestMethod]
+        public void PressureMeasurement_GetUMRConverted_UnitIsBarg_ReturnBara()
         {
             var pressure = new PhaseOptDcs.PressureMeasurement();
             double testPressureBara = 112.713_25;
             pressure.Value = 111.7;
+            pressure.Unit = PhaseOptDcs.ConfigModel.PressureUnit.barg;
 
-            double resultBara = pressure.GetConvertedPressure(PhaseOptDcs.ConfigModel.PressureUnit.barg);
+            double resultBara = pressure.GetUMRConverted();
             Assert.AreEqual(testPressureBara, resultBara, 1.0e-10);
         }
 
         [TestMethod]
-        public void PressureMeasurement_GetConvertedPressure_UnitIsBara_ReturnBara()
+        public void PressureMeasurement_GetUMRConverted_UnitIsBara_ReturnBara()
         {
             var pressure = new PhaseOptDcs.PressureMeasurement();
             double testPressureBara = 157.756_4;
             pressure.Value = 157.756_4;
+            pressure.Unit = PhaseOptDcs.ConfigModel.PressureUnit.bara;
 
-            double resultBara = pressure.GetConvertedPressure(PhaseOptDcs.ConfigModel.PressureUnit.bara);
+            double resultBara = pressure.GetUMRConverted();
             Assert.AreEqual(testPressureBara, resultBara, 1.0e-10);
         }
 
+        [TestMethod]
+        public void PressureMeasurement_GetUnitConverted_UnitIsBarg_ReturnBarg()
+        {
+            var pressure = new PhaseOptDcs.PressureMeasurement();
+            double testPressureBarg = 111.7;
+            pressure.Value = 112.713_25;
+            pressure.Unit = PhaseOptDcs.ConfigModel.PressureUnit.barg;
+
+            double resultBarg = pressure.GetUnitConverted();
+            Assert.AreEqual(testPressureBarg, resultBarg, 1.0e-10);
+        }
+
+        [TestMethod]
+        public void PressureMeasurement_GetUnitConverted_UnitIsBara_ReturnBara()
+        {
+            var pressure = new PhaseOptDcs.PressureMeasurement();
+            double testPressureBara = 157.756_4;
+            pressure.Value = 157.756_4;
+            pressure.Unit = PhaseOptDcs.ConfigModel.PressureUnit.bara;
+
+            double resultBara = pressure.GetUnitConverted();
+            Assert.AreEqual(testPressureBara, resultBara, 1.0e-10);
+        }
 
         private readonly double[] composition =
         {
