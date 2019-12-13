@@ -132,7 +132,8 @@ The configuration file is structured like the example below.
 
 -   `<OpcUrl>` is used to select what OPC server to connect to.
 
--   `<OpcUser>` and `<OpcPassword>` are used to select what user name and password to use to connect to the OPC server.
+-   `<OpcUser>` and `<OpcPassword>` are used to select what user
+    name and password to use to connect to the OPC server.
 
 -   `<Streams>` can contain one or more `<Stream>` elements.
 
@@ -186,11 +187,9 @@ A `<Stream>` element has the following attributes:
 -   `Name` is used to identify the stream.
     This text will appear in the log file to identyfy the stream.
 
-
-A Stream must have one Composition element.
-
+A `<Stream>` must have one `<Composition>` element.
 A `<Composition>` contains one or more `<Component>` elements.
-A `<Component>`has the flollowing attributes:
+A `<Component>` has the flollowing attributes:
 
 -   `Name` is give the component a human readable name.
 
@@ -199,7 +198,8 @@ A `<Component>`has the flollowing attributes:
 -   `Tag` is the OPC item for the component.
     The value of this item is read from the OPC server.
 
--   `ScaleFactor` is used to scale the value into the proper range for the UMR calculation.
+-   `ScaleFactor` is used to scale the value
+    into the proper range for the UMR calculation.
 
 A `<Stream>` can have one `<Cricondenbar>` element.
 By having one `<Cricondenbar>` element, PhaseOptDcs will calculate the cricondenbar point of the composition.
