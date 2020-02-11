@@ -288,6 +288,15 @@ namespace PhaseOptDcs
             return Results;
         }
 
+        /// <summary>
+        /// Calculates the pressure for the given liquid dropout value.
+        /// </summary>
+        /// <param name="wd">Liquid dropout value [liquid %]</param>
+        /// <param name="T">Temperature [K]</param>
+        /// <param name="PMax">Maximum pressure of the search area [bara]</param>
+        /// <param name="limit">Threshold for ending the serach. When a pressure that gives a dropout within this limit to the wantet dropout, the search is done [liquid %]</param>
+        /// <param name="maxIterations">The maximum number of iterations that the search is allowed to use. [-]</param>
+        /// <returns>The pressure that would give wd % liquid dropout [bara].</returns>
         public double DropoutSearch(double wd, double T, double PMax, double limit = 0.01, int maxIterations = 25)
         {
             double P = double.NaN;

@@ -38,17 +38,32 @@ namespace Tests
             config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.Temperature.Value = 5.5;
             config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.Temperature.Unit = PhaseOptDcs.ConfigModel.TemperatureUnit.C;
 
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.Margin.Name = "Margin Name";
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.Margin.Tag = "31DPY0157";
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.Margin.Value = 5.5;
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.Margin.Unit = PhaseOptDcs.ConfigModel.PressureUnit.barg;
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.Margin.Type = "single";
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPointMargin.Name = "Margin Name";
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPointMargin.Tag = "31DPY0157";
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPointMargin.Value = 5.5;
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPointMargin.Unit = PhaseOptDcs.ConfigModel.PressureUnit.barg;
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPointMargin.Type = "single";
 
             config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPoint.Name = "DewPoint Name";
             config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPoint.Tag = "31PY0157";
             config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPoint.Value = 5.5;
             config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPoint.Unit = PhaseOptDcs.ConfigModel.PressureUnit.barg;
             config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPoint.Type = "single";
+
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutPoint.Name = "DropoutPoint Name";
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutPoint.Tag = "31DPY0158";
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutPoint.Unit = PhaseOptDcs.ConfigModel.PressureUnit.barg;
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutPoint.Type = "single";
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutPoint.DropoutPercent = 2.0;
+
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutPointMargin.Name = "DropoutPointMargin Name";
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutPointMargin.Tag = "31DPY0159";
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutPointMargin.Unit = PhaseOptDcs.ConfigModel.PressureUnit.barg;
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutPointMargin.Type = "single";
+
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutValue.Name = "DropoutValue Name";
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutValue.Tag = "31AY0159";
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutValue.Type = "single";
 
             // Stream 1
             config.Streams.Item.Add(new PhaseOptDcs.Stream { Name = "Åsgard" });
@@ -200,22 +215,22 @@ namespace Tests
         public void WorkingPoint_GetMargin_SingleType()
         {
             PhaseOptDcs.WorkingPoint workingPoint = new PhaseOptDcs.WorkingPoint();
-            workingPoint.Margin.Type = "single";
+            workingPoint.DewPointMargin.Type = "single";
             workingPoint.Pressure.Value = 3.1415;
             workingPoint.DewPoint.Value = 1.4142;
 
-            Assert.AreEqual(typeof(System.Single), workingPoint.GetMargin().GetType());
+            Assert.AreEqual(typeof(System.Single), workingPoint.GetDewPointMargin().GetType());
         }
 
         [TestMethod]
         public void WorkingPoint_GetMargin_DoubleType()
         {
             PhaseOptDcs.WorkingPoint workingPoint = new PhaseOptDcs.WorkingPoint();
-            workingPoint.Margin.Type = "double";
+            workingPoint.DewPointMargin.Type = "double";
             workingPoint.Pressure.Value = 3.1415;
             workingPoint.DewPoint.Value = 1.4142;
 
-            Assert.AreEqual(typeof(System.Double), workingPoint.GetMargin().GetType());
+            Assert.AreEqual(typeof(System.Double), workingPoint.GetDewPointMargin().GetType());
         }
 
         [TestMethod]
@@ -225,7 +240,7 @@ namespace Tests
             workingPoint.Pressure.Value = 3.1415;
             workingPoint.DewPoint.Value = 1.4142;
 
-            Assert.AreEqual(typeof(System.Double), workingPoint.GetMargin().GetType());
+            Assert.AreEqual(typeof(System.Double), workingPoint.GetDewPointMargin().GetType());
         }
 
         [TestMethod]

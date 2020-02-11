@@ -189,18 +189,24 @@ namespace PhaseOptDcs
         [XmlElement]
         public TemperatureMeasurement Temperature { get; set; } = new TemperatureMeasurement();
         [XmlElement]
-        public PressureMeasurement Margin { get; set; } = new PressureMeasurement();
+        public PressureMeasurement DewPointMargin { get; set; } = new PressureMeasurement();
         [XmlElement]
         public PressureMeasurement DewPoint { get; set; } = new PressureMeasurement();
+        [XmlElement]
+        public DropoutMeasurement DropoutPoint { get; set; } = new DropoutMeasurement();
+        [XmlElement]
+        public PressureMeasurement DropoutPointMargin { get; set; } = new PressureMeasurement();
+        [XmlElement]
+        public Measurement DropoutValue { get; set; } = new Measurement();
 
-        public object GetMargin()
+        public object GetDewPointMargin()
         {
             double margin = Pressure.Value - DewPoint.Value;
-            if (Margin.Type == "single")
+            if (DewPointMargin.Type == "single")
             {
                 return Convert.ToSingle(margin);
             }
-            else if (DewPoint.Type == "double")
+            else if (DewPointMargin.Type == "double")
             {
                 return Convert.ToDouble(margin);
             }
@@ -225,6 +231,57 @@ namespace PhaseOptDcs
                 return Convert.ToDouble(DewPoint.GetUnitConverted());
             }
         }
+
+        public object GetDropoutMargin()
+        {
+            double margin = Pressure.Value - DropoutPoint.Value;
+            if (DropoutPointMargin.Type == "single")
+            {
+                return Convert.ToSingle(margin);
+            }
+            else if (DropoutPointMargin.Type == "double")
+            {
+                return Convert.ToDouble(margin);
+            }
+            else
+            {
+                return Convert.ToDouble(margin);
+            }
+        }
+
+        public object GetDropoutPoint()
+        {
+            if (DropoutPoint.Type == "single")
+            {
+                return Convert.ToSingle(DropoutPoint.GetUnitConverted());
+            }
+            else if (DropoutPoint.Type == "double")
+            {
+                return Convert.ToDouble(DropoutPoint.GetUnitConverted());
+            }
+            else
+            {
+                return Convert.ToDouble(DropoutPoint.GetUnitConverted());
+            }
+        }
+
+        public object GetDropoutValue()
+        {
+            if (DropoutPoint.Type == "single")
+            {
+                return Convert.ToSingle(DropoutValue.Value);
+            }
+            else if (DropoutPoint.Type == "double")
+            {
+                return Convert.ToDouble(DropoutValue.Value);
+            }
+            else
+            {
+                return Convert.ToDouble(DropoutValue.Value);
+            }
+        }
+
+
     }
 
     public class Measurement
@@ -330,5 +387,11 @@ namespace PhaseOptDcs
 
             return (result);
         }
+    }
+
+    public class DropoutMeasurement: PressureMeasurement
+    {
+        [XmlAttribute]
+        public double DropoutPercent { get; set; }
     }
 }
