@@ -201,7 +201,7 @@ namespace PhaseOptDcs
 
         public object GetDewPointMargin()
         {
-            double margin = Pressure.Value - DewPoint.Value;
+            double margin = Pressure.Value - DewPoint.GetUnitConverted();
             if (DewPointMargin.Type == "single")
             {
                 return Convert.ToSingle(margin);
@@ -234,7 +234,7 @@ namespace PhaseOptDcs
 
         public object GetDropoutMargin()
         {
-            double margin = Pressure.Value - DropoutPoint.Value;
+            double margin = Pressure.Value - DropoutPoint.GetUnitConverted();
             if (DropoutPointMargin.Type == "single")
             {
                 return Convert.ToSingle(margin);
