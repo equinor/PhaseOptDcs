@@ -20,7 +20,7 @@ namespace Tests
                 OpcPassword = "password",
                 Interval = 60_000.0
             };
-            config.Streams.Item.Add(new PhaseOptDcs.Stream { Name = "Statpipe" });
+            config.Streams.Item.Add(new PhaseOptDcs.Stream { Name = "Statpipe", FluidTune = false });
             config.Streams.Item[0].Composition.Item.Add(new PhaseOptDcs.Component { Name = "CO2", Id = 1, Tag = "31AI0157A_K", ScaleFactor = 1.0 });
             config.Streams.Item[0].Composition.Item.Add(new PhaseOptDcs.Component { Name = "N2", Id = 2, Tag = "31AI0157A_J", ScaleFactor = 1.0 });
             config.Streams.Item[0].Cricondenbar.Temperature.Tag = "31TY0157_A";
@@ -67,7 +67,7 @@ namespace Tests
             config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutValue.Type = "single";
 
             // Stream 1
-            config.Streams.Item.Add(new PhaseOptDcs.Stream { Name = "Åsgard" });
+            config.Streams.Item.Add(new PhaseOptDcs.Stream { Name = "Åsgard", FluidTune = true });
             config.Streams.Item[1].Composition.Item.Add(new PhaseOptDcs.Component { Name = "CO2", Id = 1, Tag = "31AI0161B_K", ScaleFactor = 1.0 });
             config.Streams.Item[1].Composition.Item.Add(new PhaseOptDcs.Component { Name = "N2", Id = 2, Tag = "31AI0161B_J", ScaleFactor = 1.0 });
             config.Streams.Item[1].Cricondenbar.Temperature.Tag = "31TY0161_A";

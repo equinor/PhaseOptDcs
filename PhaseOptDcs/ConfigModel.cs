@@ -60,6 +60,8 @@ namespace PhaseOptDcs
     {
         [XmlAttribute]
         public string Name { get; set; }
+        [XmlAttribute]
+        public bool FluidTune { get; set; }
 
         [XmlElement]
         public CompositionList Composition { get; set; } = new CompositionList();

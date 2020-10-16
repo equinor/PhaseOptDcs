@@ -148,7 +148,11 @@ namespace PhaseOptDcs
             // Process each stream in parallel
             Parallel.For(0, umrCallerList.Count, i =>
             {
-                umrCallerList[i].FluidTune();
+                if (config.Streams.Item[i].FluidTune)
+                {
+                    umrCallerList[i].FluidTune();
+                }
+
                 if (!string.IsNullOrEmpty(config.Streams.Item[i].Cricondenbar.Pressure.Tag) ||
                     !string.IsNullOrEmpty(config.Streams.Item[i].Cricondenbar.Temperature.Tag))
                 {
