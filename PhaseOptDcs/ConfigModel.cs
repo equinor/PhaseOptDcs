@@ -27,6 +27,8 @@ namespace PhaseOptDcs
         [XmlElement]
         public string OpcPassword { get; set; }
         [XmlElement]
+        public double Interval { get; set; }
+        [XmlElement]
         public StreamList Streams { get; set; } = new StreamList();
 
         public static ConfigModel ReadConfig(string file)

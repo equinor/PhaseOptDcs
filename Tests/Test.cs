@@ -18,6 +18,7 @@ namespace Tests
                 OpcUrl = "opc.tcp://localhost:62548/Quickstarts/DataAccessServer",
                 OpcUser = "user",
                 OpcPassword = "password",
+                Interval = 60_000.0
             };
             config.Streams.Item.Add(new PhaseOptDcs.Stream { Name = "Statpipe" });
             config.Streams.Item[0].Composition.Item.Add(new PhaseOptDcs.Component { Name = "CO2", Id = 1, Tag = "31AI0157A_K", ScaleFactor = 1.0 });
@@ -392,7 +393,7 @@ namespace Tests
             double[] expected = { 102.70644183416010, -13.831775300562015 };
             // bara and K
             double[] result = uMROL.Cricondenbar();
-            Assert.AreEqual(expected[0], result[0], 1.0e-10);
+            Assert.AreEqual(expected[0], result[0], 1.0e-5);
             Assert.AreEqual(expected[1] + 273.15, result[1], 1.0e-5);
         }
     }

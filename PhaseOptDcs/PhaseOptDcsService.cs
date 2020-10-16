@@ -14,6 +14,7 @@ namespace PhaseOptDcs
         private readonly OpcClient opcClient;
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private readonly object WorkerLock = new object();
+        private bool working = false;
 
         public PhaseOptDcsService()
         {
@@ -30,7 +31,7 @@ namespace PhaseOptDcs
                 throw;
             }
 
-            timer = new Timer(60_000.0) { AutoReset = true, SynchronizingObject = null };
+            timer = new Timer(config.Interval) { AutoReset = true, SynchronizingObject = null };
             timer.Elapsed += Worker;
 
             opcClient = new OpcClient(config.OpcUrl, config.OpcUser, config.OpcPassword);
@@ -51,11 +52,18 @@ namespace PhaseOptDcs
 
         private void Worker(object sender, ElapsedEventArgs ea)
         {
+            if (working)
+            {
+                logger.Warn(CultureInfo.InvariantCulture, "Worker not completed within Interval. Interval might be too short.");
+            }
+
             lock (WorkerLock)
             {
+                working = true;
                 List<UMROL> umrCallerList = ReadFromOPC();
                 ProcessStreams(umrCallerList);
                 WriteToOPC();
+                working = false;
             }
         }
 
