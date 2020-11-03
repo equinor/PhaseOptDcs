@@ -119,11 +119,12 @@ The configuration file is structured like the example below.
       <OpcUrl>opc.tcp://localhost:62548/Quickstarts/DataAccessServer</OpcUrl>
       <OpcUser>user</OpcUser>
       <OpcPassword>password</OpcPassword>
+      <Interval>60000.0</Interval>
       <Streams>
-        <Stream Name="Stream 1">
+        <Stream Name="Stream 1" FluidTune="false">
         ...
         </Stream>
-        <Stream Name="Stream 2">
+        <Stream Name="Stream 2" FluidTune="true">
         ...
         </Stream>
       </Streams>
@@ -136,13 +137,15 @@ The configuration file is structured like the example below.
 
 -   `<OpcUser>` and `<OpcPassword>` are used to select what user name and password to use to connect to the OPC server.
 
+-   `<Interval>` is used to set the interval in milli seconds.
+
 -   `<Streams>` can contain one or more `<Stream>` elements.
 
 Every `<Stream>` element is structured like below.
 
 .. code-block:: xml
 
-    <Stream Name="Statpipe">
+    <Stream Name="Statpipe"  FluidTune="true">
       <Composition>
         <Component Name="CO2"  Id="1"   Tag="ns=2;s=1:AI1001?K" ScaleFactor="1.0" />
         <Component Name="N2"   Id="2"   Tag="ns=2;s=1:AI1001?J" ScaleFactor="1.0" />
@@ -187,6 +190,8 @@ A `<Stream>` element has the following attributes:
 
 -   `Name` is used to identify the stream.
     This text will appear in the log file to identyfy the stream.
+
+-   `FluidTune`, if this is set to true, the stream composition is "tuned" to give a cricondenbar pressure that is 2.4 bar higher.
 
 A `<Stream>` must have one `<Composition>` element.
 A `<Composition>` contains one or more `<Component>` elements.

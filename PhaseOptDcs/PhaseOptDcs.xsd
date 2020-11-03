@@ -6,6 +6,7 @@
         <xsd:element name="OpcUrl" type="xsd:string" />
         <xsd:element name="OpcUser" type="xsd:string" />
         <xsd:element name="OpcPassword" type="xsd:string" />
+        <xsd:element name="Interval" type="xsd:decimal" />
         <xsd:element name="Streams">
           <xsd:complexType>
             <xsd:sequence>
@@ -59,6 +60,7 @@
                     </xsd:element>
                   </xsd:sequence>
                   <xsd:attribute name="Name" type="xsd:string" use="required" />
+                  <xsd:attribute name="FluidTune" type="xsd:boolean" use="required" />
                 </xsd:complexType>
               </xsd:element>
             </xsd:sequence>

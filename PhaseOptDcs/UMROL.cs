@@ -6,6 +6,7 @@ namespace PhaseOptDcs
 {
     public class UMROL
     {
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private double[] CompositionValues;
         private Int32[] CompositionIDs;
 
@@ -156,6 +157,9 @@ namespace PhaseOptDcs
             Results[0] = CCBP;
             Results[1] = CCBT;
 
+            logger.Debug(CultureInfo.InvariantCulture, "Cricondenbar arguments: {0}", Arguments);
+            logger.Debug(CultureInfo.InvariantCulture, "Cricondenbar results: {0}", output);
+
             return Results;
         }
 
@@ -285,9 +289,21 @@ namespace PhaseOptDcs
                 Results[1] = Convert.ToDouble(output.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[1], CultureInfo.InvariantCulture);
             }
 
+            logger.Debug(CultureInfo.InvariantCulture, "Dropout arguments: {0}", Arguments);
+            logger.Debug(CultureInfo.InvariantCulture, "Dropout results: {0}", output);
+
             return Results;
         }
 
+        /// <summary>
+        /// Calculates the pressure for the given liquid dropout value.
+        /// </summary>
+        /// <param name="wd">Liquid dropout value [liquid %]</param>
+        /// <param name="T">Temperature [K]</param>
+        /// <param name="PMax">Maximum pressure of the search area [bara]</param>
+        /// <param name="limit">Threshold for ending the serach. When a pressure that gives a dropout within this limit to the wantet dropout, the search is done [liquid %]</param>
+        /// <param name="maxIterations">The maximum number of iterations that the search is allowed to use. [-]</param>
+        /// <returns>The pressure that would give wd % liquid dropout [bara].</returns>
         public double DropoutSearch(double wd, double T, double PMax, double limit = 0.01, int maxIterations = 25)
         {
             double P = double.NaN;
@@ -405,6 +421,9 @@ namespace PhaseOptDcs
             if (P1 > 900.0) P1 = 0.0;
             if (P2 > 900.0) P2 = 0.0;
 
+            logger.Debug(CultureInfo.InvariantCulture, "DewP arguments: {0}", Arguments);
+            logger.Debug(CultureInfo.InvariantCulture, "DewP results: {0}", output);
+
             return Math.Max(P1, P2);
         }
 
@@ -452,6 +471,9 @@ namespace PhaseOptDcs
                     CompositionValues[i] = Convert.ToDouble(output.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[i], CultureInfo.InvariantCulture);
                 }
             }
+
+            logger.Debug(CultureInfo.InvariantCulture, "FluidTune arguments: {0}", Arguments);
+            logger.Debug(CultureInfo.InvariantCulture, "FluidTune results: {0}", output);
 
             return 0;
         }

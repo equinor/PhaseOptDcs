@@ -18,8 +18,9 @@ namespace Tests
                 OpcUrl = "opc.tcp://localhost:62548/Quickstarts/DataAccessServer",
                 OpcUser = "user",
                 OpcPassword = "password",
+                Interval = 60_000.0
             };
-            config.Streams.Item.Add(new PhaseOptDcs.Stream { Name = "Statpipe" });
+            config.Streams.Item.Add(new PhaseOptDcs.Stream { Name = "Statpipe", FluidTune = false });
             config.Streams.Item[0].Composition.Item.Add(new PhaseOptDcs.Component { Name = "CO2", Id = 1, Tag = "31AI0157A_K", ScaleFactor = 1.0 });
             config.Streams.Item[0].Composition.Item.Add(new PhaseOptDcs.Component { Name = "N2", Id = 2, Tag = "31AI0157A_J", ScaleFactor = 1.0 });
             config.Streams.Item[0].Cricondenbar.Temperature.Tag = "31TY0157_A";
@@ -38,11 +39,11 @@ namespace Tests
             config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.Temperature.Value = 5.5;
             config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.Temperature.Unit = PhaseOptDcs.ConfigModel.TemperatureUnit.C;
 
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.Margin.Name = "Margin Name";
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.Margin.Tag = "31DPY0157";
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.Margin.Value = 5.5;
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.Margin.Unit = PhaseOptDcs.ConfigModel.PressureUnit.barg;
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.Margin.Type = "single";
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPointMargin.Name = "Margin Name";
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPointMargin.Tag = "31DPY0157";
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPointMargin.Value = 5.5;
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPointMargin.Unit = PhaseOptDcs.ConfigModel.PressureUnit.barg;
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPointMargin.Type = "single";
 
             config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPoint.Name = "DewPoint Name";
             config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPoint.Tag = "31PY0157";
@@ -50,8 +51,23 @@ namespace Tests
             config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPoint.Unit = PhaseOptDcs.ConfigModel.PressureUnit.barg;
             config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPoint.Type = "single";
 
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutPoint.Name = "DropoutPoint Name";
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutPoint.Tag = "31DPY0158";
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutPoint.Unit = PhaseOptDcs.ConfigModel.PressureUnit.barg;
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutPoint.Type = "single";
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutPoint.DropoutPercent = 2.0;
+
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutPointMargin.Name = "DropoutPointMargin Name";
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutPointMargin.Tag = "31DPY0159";
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutPointMargin.Unit = PhaseOptDcs.ConfigModel.PressureUnit.barg;
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutPointMargin.Type = "single";
+
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutValue.Name = "DropoutValue Name";
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutValue.Tag = "31AY0159";
+            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutValue.Type = "single";
+
             // Stream 1
-            config.Streams.Item.Add(new PhaseOptDcs.Stream { Name = "Åsgard" });
+            config.Streams.Item.Add(new PhaseOptDcs.Stream { Name = "Åsgard", FluidTune = true });
             config.Streams.Item[1].Composition.Item.Add(new PhaseOptDcs.Component { Name = "CO2", Id = 1, Tag = "31AI0161B_K", ScaleFactor = 1.0 });
             config.Streams.Item[1].Composition.Item.Add(new PhaseOptDcs.Component { Name = "N2", Id = 2, Tag = "31AI0161B_J", ScaleFactor = 1.0 });
             config.Streams.Item[1].Cricondenbar.Temperature.Tag = "31TY0161_A";
@@ -144,10 +160,8 @@ namespace Tests
             PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar();
             cricondenbar.Temperature.Value = 3.1415;
             cricondenbar.Temperature.Type = "single";
-            cricondenbar.Temperature.Unit = PhaseOptDcs.ConfigModel.TemperatureUnit.K;
 
             Assert.AreEqual(typeof(System.Single), cricondenbar.GetTemperature().GetType());
-            Assert.AreEqual(3.1415, Convert.ToDouble(cricondenbar.GetTemperature(), CultureInfo.InvariantCulture), 1.0e-5);
         }
 
         [TestMethod]
@@ -156,10 +170,8 @@ namespace Tests
             PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar();
             cricondenbar.Temperature.Value = 3.1415;
             cricondenbar.Temperature.Type = "double";
-            cricondenbar.Temperature.Unit = PhaseOptDcs.ConfigModel.TemperatureUnit.K;
 
             Assert.AreEqual(typeof(System.Double), cricondenbar.GetTemperature().GetType());
-            Assert.AreEqual(3.1415, Convert.ToDouble(cricondenbar.GetTemperature(), CultureInfo.InvariantCulture), 1.0e-10);
         }
 
         [TestMethod]
@@ -167,10 +179,8 @@ namespace Tests
         {
             PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar();
             cricondenbar.Temperature.Value = 3.1415;
-            cricondenbar.Temperature.Unit = PhaseOptDcs.ConfigModel.TemperatureUnit.K;
 
             Assert.AreEqual(typeof(System.Double), cricondenbar.GetTemperature().GetType());
-            Assert.AreEqual(3.1415, Convert.ToDouble(cricondenbar.GetTemperature(), CultureInfo.InvariantCulture), 1.0e-10);
         }
 
         [TestMethod]
@@ -179,10 +189,8 @@ namespace Tests
             PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar();
             cricondenbar.Pressure.Value = 3.1415;
             cricondenbar.Pressure.Type = "single";
-            cricondenbar.Pressure.Unit = PhaseOptDcs.ConfigModel.PressureUnit.bara;
 
             Assert.AreEqual(typeof(System.Single), cricondenbar.GetPressure().GetType());
-            Assert.AreEqual(3.1415, Convert.ToDouble(cricondenbar.GetPressure(), CultureInfo.InvariantCulture), 1.0e-5);
         }
 
         [TestMethod]
@@ -191,10 +199,8 @@ namespace Tests
             PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar();
             cricondenbar.Pressure.Value = 3.1415;
             cricondenbar.Pressure.Type = "double";
-            cricondenbar.Pressure.Unit = PhaseOptDcs.ConfigModel.PressureUnit.bara;
 
             Assert.AreEqual(typeof(System.Double), cricondenbar.GetPressure().GetType());
-            Assert.AreEqual(3.1415, Convert.ToDouble(cricondenbar.GetPressure(), CultureInfo.InvariantCulture), 1.0e-10);
         }
 
         [TestMethod]
@@ -202,34 +208,30 @@ namespace Tests
         {
             PhaseOptDcs.Cricondenbar cricondenbar = new PhaseOptDcs.Cricondenbar();
             cricondenbar.Pressure.Value = 3.1415;
-            cricondenbar.Pressure.Unit = PhaseOptDcs.ConfigModel.PressureUnit.bara;
 
             Assert.AreEqual(typeof(System.Double), cricondenbar.GetPressure().GetType());
-            Assert.AreEqual(3.1415, Convert.ToDouble(cricondenbar.GetPressure(), CultureInfo.InvariantCulture), 1.0e-10);
         }
 
         [TestMethod]
         public void WorkingPoint_GetMargin_SingleType()
         {
             PhaseOptDcs.WorkingPoint workingPoint = new PhaseOptDcs.WorkingPoint();
-            workingPoint.Margin.Type = "single";
+            workingPoint.DewPointMargin.Type = "single";
             workingPoint.Pressure.Value = 3.1415;
             workingPoint.DewPoint.Value = 1.4142;
 
-            Assert.AreEqual(typeof(System.Single), workingPoint.GetMargin().GetType());
-            Assert.AreEqual(1.7273, Convert.ToDouble(workingPoint.GetMargin(), CultureInfo.InvariantCulture), 1.0e-5);
+            Assert.AreEqual(typeof(System.Single), workingPoint.GetDewPointMargin().GetType());
         }
 
         [TestMethod]
         public void WorkingPoint_GetMargin_DoubleType()
         {
             PhaseOptDcs.WorkingPoint workingPoint = new PhaseOptDcs.WorkingPoint();
-            workingPoint.Margin.Type = "double";
+            workingPoint.DewPointMargin.Type = "double";
             workingPoint.Pressure.Value = 3.1415;
             workingPoint.DewPoint.Value = 1.4142;
 
-            Assert.AreEqual(typeof(System.Double), workingPoint.GetMargin().GetType());
-            Assert.AreEqual(1.7273, Convert.ToDouble(workingPoint.GetMargin(), CultureInfo.InvariantCulture), 1.0e-10);
+            Assert.AreEqual(typeof(System.Double), workingPoint.GetDewPointMargin().GetType());
         }
 
         [TestMethod]
@@ -239,8 +241,7 @@ namespace Tests
             workingPoint.Pressure.Value = 3.1415;
             workingPoint.DewPoint.Value = 1.4142;
 
-            Assert.AreEqual(typeof(System.Double), workingPoint.GetMargin().GetType());
-            Assert.AreEqual(1.7273, Convert.ToDouble(workingPoint.GetMargin(), CultureInfo.InvariantCulture), 1.0e-10);
+            Assert.AreEqual(typeof(System.Double), workingPoint.GetDewPointMargin().GetType());
         }
 
         [TestMethod]
@@ -252,7 +253,6 @@ namespace Tests
 
 
             Assert.AreEqual(typeof(System.Single), workingPoint.GetDewPoint().GetType());
-            Assert.AreEqual(1.4142, Convert.ToDouble(workingPoint.GetDewPoint(), CultureInfo.InvariantCulture), 1.0e-5);
         }
 
         [TestMethod]
@@ -263,7 +263,6 @@ namespace Tests
             workingPoint.DewPoint.Value = 1.4142;
 
             Assert.AreEqual(typeof(System.Double), workingPoint.GetDewPoint().GetType());
-            Assert.AreEqual(1.4142, Convert.ToDouble(workingPoint.GetDewPoint(), CultureInfo.InvariantCulture), 1.0e-10);
         }
 
         [TestMethod]
@@ -273,7 +272,6 @@ namespace Tests
             workingPoint.DewPoint.Value = 1.4142;
 
             Assert.AreEqual(typeof(System.Double), workingPoint.GetDewPoint().GetType());
-            Assert.AreEqual(1.4142, Convert.ToDouble(workingPoint.GetDewPoint(), CultureInfo.InvariantCulture), 1.0e-10);
         }
 
         [TestMethod]
@@ -395,7 +393,7 @@ namespace Tests
             double[] expected = { 102.70644183416010, -13.831775300562015 };
             // bara and K
             double[] result = uMROL.Cricondenbar();
-            Assert.AreEqual(expected[0], result[0], 1.0e-10);
+            Assert.AreEqual(expected[0], result[0], 1.0e-5);
             Assert.AreEqual(expected[1] + 273.15, result[1], 1.0e-5);
         }
     }
