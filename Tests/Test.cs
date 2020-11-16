@@ -26,6 +26,7 @@ namespace Tests
             config.Streams.Item[0].Cricondenbar.Temperature.Tag = "31TY0157_A";
             config.Streams.Item[0].Cricondenbar.Pressure.Tag = "31PY0157_A";
             config.Streams.Item[0].LiquidDropouts.Item.Add(new PhaseOptDcs.LiquidDropout());
+            config.Streams.Item[0].LiquidDropouts.Item[0].Raw = true;
             config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint = new PhaseOptDcs.WorkingPoint
                 { Name = "Kårstø" };
             

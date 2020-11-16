@@ -215,7 +215,7 @@ namespace PhaseOptDcs
 
                         dropOut.WorkingPoint.DropoutValue.Value = umrCallerList[i]
                             .Dropout(dropOut.WorkingPoint.Pressure.GetUMRConverted(),
-                                dropOut.WorkingPoint.Temperature.GetUMRConverted())[0] * 100.0;
+                                dropOut.WorkingPoint.Temperature.GetUMRConverted(), dropOut.Raw)[0] * 100.0;
                         logger.Debug(CultureInfo.InvariantCulture,
                             "Stream: \"{0}\" Working point: \"{1}\" Dropout value: {2} tag: \"{3}\"",
                             config.Streams.Item[i].Name, dropOut.WorkingPoint.Name,
