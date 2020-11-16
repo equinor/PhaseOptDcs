@@ -237,7 +237,7 @@ namespace PhaseOptDcs
         /// <param name="P">Pressure [bara]</param>
         /// <param name="T">Temperature [K]</param>
         /// <returns>An array containing the liquid dropout mass and volume fractions.</returns>
-        public double[] Dropout(double P, double T, bool Raw)
+        public double[] Dropout(double P, double T, bool Raw = false)
         {
             double[] Results = new double[2] { double.NaN, double.NaN };
             string Arguments = "-vpl -id";
@@ -310,7 +310,7 @@ namespace PhaseOptDcs
         /// <param name="limit">Threshold for ending the serach. When a pressure that gives a dropout within this limit to the wantet dropout, the search is done [liquid %]</param>
         /// <param name="maxIterations">The maximum number of iterations that the search is allowed to use. [-]</param>
         /// <returns>The pressure that would give wd % liquid dropout [bara].</returns>
-        public double DropoutSearch(double wd, double T, double PMax, double limit = 0.01, int maxIterations = 25)
+        public double DropoutSearch(double wd, double T, double PMax, double limit = 0.01, int maxIterations = 25, bool Raw = false)
         {
             double P = double.NaN;
             string Arguments = "-ds -id";
@@ -336,6 +336,10 @@ namespace PhaseOptDcs
             Arguments += " -t " + T.ToString("G", CultureInfo.InvariantCulture) + "D0";
             Arguments += " -limit " + limit.ToString("G", CultureInfo.InvariantCulture) + "D0";
             Arguments += " -max-itr " + maxIterations.ToString(CultureInfo.InvariantCulture);
+            if (Raw)
+            {
+                Arguments += " -raw ";
+            }
 
             umrol.StartInfo.UseShellExecute = false;
             umrol.StartInfo.RedirectStandardOutput = true;
@@ -362,6 +366,9 @@ namespace PhaseOptDcs
             {
                 P = Convert.ToDouble(output.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[0], CultureInfo.InvariantCulture);
             }
+
+            logger.Debug(CultureInfo.InvariantCulture, "DropoutSearch arguments: {0}", Arguments);
+            logger.Debug(CultureInfo.InvariantCulture, "DropoutSearch results: {0}", P);
 
             return P;
         }
