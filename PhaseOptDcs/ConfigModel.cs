@@ -180,6 +180,8 @@ namespace PhaseOptDcs
     }
     public class LiquidDropout
     {
+        [XmlAttribute]
+        public bool Raw { get; set; }
         [XmlElement]
         public WorkingPoint WorkingPoint { get; set; }
     }

@@ -26,6 +26,7 @@ namespace Tests
             config.Streams.Item[0].Cricondenbar.Temperature.Tag = "31TY0157_A";
             config.Streams.Item[0].Cricondenbar.Pressure.Tag = "31PY0157_A";
             config.Streams.Item[0].LiquidDropouts.Item.Add(new PhaseOptDcs.LiquidDropout());
+            config.Streams.Item[0].LiquidDropouts.Item[0].Raw = true;
             config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint = new PhaseOptDcs.WorkingPoint
                 { Name = "Kårstø" };
             
@@ -369,9 +370,13 @@ namespace Tests
             double resultBara = pressure.GetUnitConverted();
             Assert.AreEqual(testPressureBara, resultBara, 1.0e-10);
         }
+    }
 
+    [TestClass]
+    public class UMRTests
+    {
         private readonly double[] composition =
-        {
+{
             0.023176439, 0.006907786, 0.831210139, 0.077432143, 0.038859448,
             0.005465126, 0.009835248, 0.002111395, 0.002150455, 0.000666455,
             0.000214464, 0.000498599, 0.000200478, 0.000647215, 0.000163487,
@@ -386,7 +391,7 @@ namespace Tests
         };
 
         [TestMethod]
-        public void UMROL_Cricondenbar()
+        public void Cricondenbar()
         {
             PhaseOptDcs.UMROL uMROL = new PhaseOptDcs.UMROL(ids, composition);
 
@@ -395,6 +400,70 @@ namespace Tests
             double[] result = uMROL.Cricondenbar();
             Assert.AreEqual(expected[0], result[0], 1.0e-5);
             Assert.AreEqual(expected[1] + 273.15, result[1], 1.0e-5);
+        }
+
+        [TestMethod]
+        public void Cricondentherm()
+        {
+            PhaseOptDcs.UMROL uMROL = new PhaseOptDcs.UMROL(ids, composition);
+
+            double[] expected = { 44.1059802149275, 294.477189083835 };
+            // bara and K
+            double[] result = uMROL.Cricondentherm();
+            Assert.AreEqual(expected[0], result[0], 1.0e-5);
+            Assert.AreEqual(expected[1], result[1], 1.0e-5);
+        }
+
+        [TestMethod]
+        public void Dropout()
+        {
+            PhaseOptDcs.UMROL uMROL = new PhaseOptDcs.UMROL(ids, composition);
+
+            double P = 92.88;
+            double T = -12.5 + 273.15;
+            double[] expected = { 4.1053418702504E-002, 1.09752576702717E-002 };
+            double[] result = uMROL.Dropout(P: P, T: T, Raw: false);
+            Assert.AreEqual(expected[0], result[0], 1.0e-5);
+            Assert.AreEqual(expected[1], result[1], 1.0e-5);
+        }
+
+        [TestMethod]
+        public void Dropout_Raw()
+        {
+            PhaseOptDcs.UMROL uMROL = new PhaseOptDcs.UMROL(ids, composition);
+
+            double P = 92.88;
+            double T = -12.5 + 273.15;
+            double[] expected = { 3.5581274628537E-002, 1.09752576702717E-002 };
+            double[] result = uMROL.Dropout(P: P, T: T, Raw: true);
+            Assert.AreEqual(expected[0], result[0], 1.0e-5);
+            Assert.AreEqual(expected[1], result[1], 1.0e-5);
+        }
+
+        [TestMethod]
+        public void DropoutSearch()
+        {
+            PhaseOptDcs.UMROL uMROL = new PhaseOptDcs.UMROL(ids, composition);
+
+            double wd = 2.5;
+            double PMax = 102.88;
+            double T = -12.5 + 273.15;
+            double expected = 97.75609375;
+            double result = uMROL.DropoutSearch(wd: wd, T: T, PMax: PMax);
+            Assert.AreEqual(expected, result, 1.0e-5);
+        }
+
+        [TestMethod]
+        public void DropoutSearch_Raw()
+        {
+            PhaseOptDcs.UMROL uMROL = new PhaseOptDcs.UMROL(ids, composition);
+
+            double wd = 2.5;
+            double PMax = 102.88;
+            double T = -12.5 + 273.15;
+            double expected = 96.098359375;
+            double result = uMROL.DropoutSearch(wd: wd, T: T, PMax: PMax, Raw: true);
+            Assert.AreEqual(expected, result, 1.0e-5);
         }
     }
 }

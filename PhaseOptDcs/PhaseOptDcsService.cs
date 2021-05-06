@@ -201,7 +201,7 @@ namespace PhaseOptDcs
                         dropOut.WorkingPoint.DropoutPoint.Value = umrCallerList[i]
                             .DropoutSearch(dropOut.WorkingPoint.DropoutPoint.DropoutPercent,
                                 dropOut.WorkingPoint.Temperature.GetUMRConverted(),
-                                dropOut.WorkingPoint.DewPoint.GetUMRConverted());
+                                dropOut.WorkingPoint.DewPoint.GetUMRConverted(), Raw: dropOut.Raw);
                         logger.Debug(CultureInfo.InvariantCulture,
                             "Stream: \"{0}\" Working point \"{1}\": Dropout point: Pressure {2} Unit: \"{3}\" Pressure tag: \"{4}\"",
                             config.Streams.Item[i].Name, dropOut.WorkingPoint.Name,
@@ -215,7 +215,7 @@ namespace PhaseOptDcs
 
                         dropOut.WorkingPoint.DropoutValue.Value = umrCallerList[i]
                             .Dropout(dropOut.WorkingPoint.Pressure.GetUMRConverted(),
-                                dropOut.WorkingPoint.Temperature.GetUMRConverted())[0] * 100.0;
+                                dropOut.WorkingPoint.Temperature.GetUMRConverted(), dropOut.Raw)[0] * 100.0;
                         logger.Debug(CultureInfo.InvariantCulture,
                             "Stream: \"{0}\" Working point: \"{1}\" Dropout value: {2} tag: \"{3}\"",
                             config.Streams.Item[i].Name, dropOut.WorkingPoint.Name,
