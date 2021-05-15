@@ -175,12 +175,13 @@ Every `<Stream>` element is structured like below.
         <Temperature Name="Temperature Name"  Tag="ns=2;s=1:AI1001?Temperature" Type="single" />
       </Cricondenbar>
       <LiquidDropouts>
-        <LiquidDropout>
+        <LiquidDropout Raw="true">
           <WorkingPoint Name="Kårstø">
             <Pressure    Name="Pressure Name"    Tag="ns=2;s=1:PI1001?Measurement" Unit="barg" />
             <Temperature Name="Temperature Name" Tag="ns=2;s=1:TI1001?Measurement" Unit="C" />
             <Margin      Name="Margin Name"      Tag="ns=2;s=1:PI1002?Measurement" Unit="barg" Type="single" />
             <DewPoint    Name="DewPoint Name"    Tag="ns=2;s=1:PI1003?Measurement" Unit="barg" Type="single" />
+            <DropoutPoint Name="DropoutPoint Name" Tag="ns=2;s=1:PI1004?Measurement" Unit="barg" Type="single" DropoutPercent="2.5" />
           </WorkingPoint>
         </LiquidDropout>
       </LiquidDropouts>
@@ -232,6 +233,10 @@ A `<LiquidDropout>` element can contain a `<WorkingPoint>` element, with the fol
 
 -   `<DewPoint>` is the dew point pressure at the working point temperature.
 
+-   `<DropoutPoint>` is the pressure where the liquid dropout will be equal to the value in the attribute `DropoutPercent`.
+
+The `Raw` attribute will cause the liquid dropout values to be calculated without "corrections".
+
 .. figure:: fig1.svg
    :alt: Figure no 1
 
@@ -240,3 +245,11 @@ A `<LiquidDropout>` element can contain a `<WorkingPoint>` element, with the fol
 
 Files
 -----
+
+-   `PhaseOptDcs.exe`
+
+-   `PhaseOptDcs.config`
+
+-   `PhaseOptDcs_Client.Config.xml`
+
+-   `umrol.exe`
