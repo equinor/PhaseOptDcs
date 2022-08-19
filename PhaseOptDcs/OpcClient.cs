@@ -65,7 +65,7 @@ namespace PhaseOptDcs
 
                 if (haveAppCertificate)
                 {
-                    config.ApplicationUri = Utils.GetApplicationUriFromCertificate(config.SecurityConfiguration.ApplicationCertificate.Certificate);
+                    config.ApplicationUri = X509Utils.GetApplicationUriFromCertificate(config.SecurityConfiguration.ApplicationCertificate.Certificate);
                     if (config.SecurityConfiguration.AutoAcceptUntrustedCertificates)
                     {
                         autoAccept = true;
