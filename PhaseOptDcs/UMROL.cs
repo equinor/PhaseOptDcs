@@ -237,9 +237,9 @@ namespace PhaseOptDcs
         /// <param name="P">Pressure [bara]</param>
         /// <param name="T">Temperature [K]</param>
         /// <returns>An array containing the liquid dropout mass and volume fractions.</returns>
-        public double[] Dropout(double P, double T, bool Raw = false)
+        public double[] Dropout(double P, double T)
         {
-            double[] Results = new double[2] { double.NaN, double.NaN };
+            double[] Results = new double[4] { double.NaN, double.NaN, double.NaN, double.NaN };
             string Arguments = "-vpl -id";
             string output = "";
             Process umrol = new Process();
@@ -287,12 +287,8 @@ namespace PhaseOptDcs
             {
                 Results[0] = Convert.ToDouble(output.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[0], CultureInfo.InvariantCulture);
                 Results[1] = Convert.ToDouble(output.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[1], CultureInfo.InvariantCulture);
-            }
-
-            if (!Raw && Results[0] >= 1.0 / 100.0)
-            {
-                Results[0] = 0.9624 * Results[0] * 100.0 + 0.6810;
-                Results[0] = Results[0] / 100.0;
+                Results[2] = Convert.ToDouble(output.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[2], CultureInfo.InvariantCulture);
+                Results[3] = Convert.ToDouble(output.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[3], CultureInfo.InvariantCulture);
             }
 
             logger.Debug(CultureInfo.InvariantCulture, "Dropout arguments: {0}", Arguments);

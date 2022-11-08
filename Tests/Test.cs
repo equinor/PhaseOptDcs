@@ -421,23 +421,12 @@ namespace Tests
 
             double P = 92.88;
             double T = -12.5 + 273.15;
-            double[] expected = { 4.1053418702504E-002, 1.09752576702717E-002 };
-            double[] result = uMROL.Dropout(P: P, T: T, Raw: false);
+            double[] expected = { 3.5581286950138152E-002, 4.1053418702504E-002, 1.09752576702717E-002, 1.271306043895745E-002 };
+            double[] result = uMROL.Dropout(P: P, T: T);
             Assert.AreEqual(expected[0], result[0], 1.0e-5);
             Assert.AreEqual(expected[1], result[1], 1.0e-5);
-        }
-
-        [TestMethod]
-        public void Dropout_Raw()
-        {
-            PhaseOptDcs.UMROL uMROL = new PhaseOptDcs.UMROL(ids, composition);
-
-            double P = 92.88;
-            double T = -12.5 + 273.15;
-            double[] expected = { 3.5581274628537E-002, 1.09752576702717E-002 };
-            double[] result = uMROL.Dropout(P: P, T: T, Raw: true);
-            Assert.AreEqual(expected[0], result[0], 1.0e-5);
-            Assert.AreEqual(expected[1], result[1], 1.0e-5);
+            Assert.AreEqual(expected[2], result[2], 1.0e-5);
+            Assert.AreEqual(expected[3], result[3], 1.0e-5);
         }
 
         [TestMethod]

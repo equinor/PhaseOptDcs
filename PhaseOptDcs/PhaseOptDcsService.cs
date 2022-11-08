@@ -213,9 +213,18 @@ namespace PhaseOptDcs
                             config.Streams.Item[i].Name, dropOut.WorkingPoint.Name,
                             dropOut.WorkingPoint.GetDropoutMargin(), dropOut.WorkingPoint.DropoutPointMargin.Tag);
 
-                        dropOut.WorkingPoint.DropoutValue.Value = umrCallerList[i]
+                        var dropoutResult = umrCallerList[i]
                             .Dropout(dropOut.WorkingPoint.Pressure.GetUMRConverted(),
-                                dropOut.WorkingPoint.Temperature.GetUMRConverted(), dropOut.Raw)[0] * 100.0;
+                                dropOut.WorkingPoint.Temperature.GetUMRConverted());
+                        if (dropOut.Raw)
+                        {
+                            dropOut.WorkingPoint.DropoutValue.Value = dropoutResult[0] * 100.0;
+                        }
+                        else
+                        {
+                            dropOut.WorkingPoint.DropoutValue.Value = dropoutResult[1] * 100.0;
+                        }
+                        
                         logger.Debug(CultureInfo.InvariantCulture,
                             "Stream: \"{0}\" Working point: \"{1}\" Dropout value: {2} tag: \"{3}\"",
                             config.Streams.Item[i].Name, dropOut.WorkingPoint.Name,
