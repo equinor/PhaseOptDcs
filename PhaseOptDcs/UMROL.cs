@@ -4,6 +4,31 @@ using System.Diagnostics;
 
 namespace PhaseOptDcs
 {
+    internal class NativeMethods
+    {
+        [DllImport("umr-ol", EntryPoint = "umrol_new")]
+        internal static extern UmrolHandle UmrolNew();
+
+        [DllImport("umr-ol", EntryPoint = "umrol_free")]
+        internal static extern void UmrolFree(IntPtr umrol);
+    }
+
+    internal class UmrolHandle : SafeHandle
+    {
+        public UmrolHandle() : base(IntPtr.Zero, true) { }
+
+        public override bool IsInvalid
+        {
+            get { return false; }
+        }
+
+        protected override bool ReleaseHandle()
+        {
+            NativeMethods.UmrolFree(handle);
+            return true;
+        }
+    }
+
     public class UMROL
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
