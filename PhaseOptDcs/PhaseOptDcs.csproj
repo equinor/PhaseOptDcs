@@ -124,6 +124,10 @@
     <Compile Include="UMROL.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\umrol.dll">
+      <Link>umrol.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="PhaseOptDcs_Client.Config.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
