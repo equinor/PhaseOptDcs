@@ -41,6 +41,9 @@ namespace PhaseOptDcs
         [DllImport("umrol", EntryPoint = "umrol_vpl")]
         internal static extern Dropout UmrolVpl(UmrolHandle umrol, double t, double p);
 
+        [DllImport("umrol", EntryPoint = "umrol_dropout_search")]
+        internal static extern double UmrolDropoutSearch(UmrolHandle umrol, double wd, double t, double p_max, double limit, int max_itr, bool raw);
+
     }
 
     internal class UmrolHandle : SafeHandle
@@ -95,6 +98,12 @@ namespace PhaseOptDcs
         {
             return NativeMethods.UmrolVpl(umrol, t, p);
         }
+
+        public double DropoutSearch(double wd, double t, double p_max, double limit = 1.0e-2, int max_itr = 25, bool raw = false)
+        {
+            return NativeMethods.UmrolDropoutSearch(umrol, wd, t, p_max, limit, max_itr, raw);
+        }
+
         public void Dispose()
         {
             Dispose(true);

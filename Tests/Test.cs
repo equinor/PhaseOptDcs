@@ -436,26 +436,28 @@ namespace Tests
         [TestMethod]
         public void DropoutSearch()
         {
-            PhaseOptDcs.UMROL uMROL = new PhaseOptDcs.UMROL(ids, composition);
+            PhaseOptDcs.Umrol umrol = new PhaseOptDcs.Umrol();
+            umrol.DataIn(ids, composition);
 
             double wd = 2.5;
             double PMax = 102.88;
             double T = -12.5 + 273.15;
-            double expected = 97.75609375;
-            double result = uMROL.DropoutSearch(wd: wd, T: T, PMax: PMax);
+            double expected = 97.7628125;
+            double result = umrol.DropoutSearch(wd: wd, t: T, p_max: PMax);
             Assert.AreEqual(expected, result, 1.0e-5);
         }
 
         [TestMethod]
         public void DropoutSearch_Raw()
         {
-            PhaseOptDcs.UMROL uMROL = new PhaseOptDcs.UMROL(ids, composition);
+            PhaseOptDcs.Umrol umrol = new PhaseOptDcs.Umrol();
+            umrol.DataIn(ids, composition);
 
             double wd = 2.5;
             double PMax = 102.88;
             double T = -12.5 + 273.15;
-            double expected = 96.098359375;
-            double result = uMROL.DropoutSearch(wd: wd, T: T, PMax: PMax, Raw: true);
+            double expected = 96.083125;
+            double result = umrol.DropoutSearch(wd: wd, t: T, p_max: PMax, raw: true);
             Assert.AreEqual(expected, result, 1.0e-5);
         }
 
