@@ -124,7 +124,7 @@ namespace PhaseOptDcs
         public string Tag { get; set; }
         [XmlAttribute]
         public double ScaleFactor { get; set; }
-        [XmlIgnore]
+        [XmlAttribute]
         public double Value { get; set; }
 
         public double GetScaledValue()

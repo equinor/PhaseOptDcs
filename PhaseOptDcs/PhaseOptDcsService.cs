@@ -52,25 +52,39 @@ namespace PhaseOptDcs
 
         private void Worker(object sender, ElapsedEventArgs ea)
         {
+            logger.Debug(CultureInfo.InvariantCulture, "Starting worker.");
+
             if (working)
             {
                 logger.Warn(CultureInfo.InvariantCulture, "Worker not completed within Interval. Interval might be too short.");
+                timer.Interval *= 1.1;
+                logger.Info(CultureInfo.InvariantCulture, "Increasing interval by 10% to {0}ms.", timer.Interval);
             }
 
             lock (WorkerLock)
             {
                 working = true;
-                List<UMROL> umrCallerList = ReadFromOPC();
+                List<Umrol> umrCallerList = ReadFromOPC();
                 ProcessStreams(umrCallerList);
                 WriteToOPC();
                 working = false;
             }
+
+            if (timer.Interval > config.Interval)
+            {
+                timer.Interval *= 0.99;
+                if (timer.Interval < config.Interval)
+                {
+                    timer.Interval = config.Interval;
+                    logger.Info(CultureInfo.InvariantCulture, "Resetting interval to {0}ms.", timer.Interval);
+                }
+            }
         }
 
-        private List<UMROL> ReadFromOPC()
+        private List<Umrol> ReadFromOPC()
         {
             // One umrCaller for each stream
-            List<UMROL> umrCallerList = new List<UMROL>();
+            List<Umrol> umrCallerList = new List<Umrol>();
             NodeIdCollection nodes = new NodeIdCollection();
             List<Type> types = new List<Type>();
             List<object> result = new List<object>();
@@ -118,10 +132,16 @@ namespace PhaseOptDcs
             {
                 foreach (var component in stream.Composition.Item)
                 {
-                    component.Value = Convert.ToDouble(result[it++], CultureInfo.InvariantCulture);
+                    if (StatusCode.IsGood(errors[it].StatusCode))
+                    {
+                        component.Value = Convert.ToDouble(result[it], CultureInfo.InvariantCulture);
+                    }
+
                     logger.Debug(CultureInfo.InvariantCulture,
-                        "Stream: \"{0}\" Component Value: {1} Name: {2} Id: {3} Tag: \"{4}\"",
+                        "Stream: \"{0}\" Component Value: {1} Name: \"{2}\" Id: {3} Tag: \"{4}\"",
                         stream.Name, component.GetScaledValue(), component.Name, component.Id, component.Tag);
+
+                    it++;
                 }
 
                 foreach (var dropout in stream.LiquidDropouts.Item)
@@ -137,13 +157,13 @@ namespace PhaseOptDcs
                         dropout.WorkingPoint.Temperature.Unit, dropout.WorkingPoint.Temperature.Tag);
                 }
 
-                umrCallerList.Add(new UMROL(stream.Composition.GetIds(), stream.Composition.GetScaledValues()));
+                umrCallerList.Add(new Umrol(stream.Composition.GetIds(), stream.Composition.GetScaledValues()));
             }
 
             return umrCallerList;
         }
 
-        private void ProcessStreams(List<UMROL> umrCallerList)
+        private void ProcessStreams(List<Umrol> umrCallerList)
         {
             // Process each stream in parallel
             Parallel.For(0, umrCallerList.Count, i =>
@@ -158,9 +178,9 @@ namespace PhaseOptDcs
                 {
                     try
                     {
-                        double[] res = umrCallerList[i].Cricondenbar();
-                        config.Streams.Item[i].Cricondenbar.Pressure.Value = res[0];
-                        config.Streams.Item[i].Cricondenbar.Temperature.Value = res[1];
+                        var res = umrCallerList[i].Cricondenbar();
+                        config.Streams.Item[i].Cricondenbar.Pressure.Value = res.p;
+                        config.Streams.Item[i].Cricondenbar.Temperature.Value = res.t;
                         logger.Debug(CultureInfo.InvariantCulture,
                             "Stream: \"{0}\" Cricondenbar pressure Value: {1} Unit: \"{2}\" Tag: \"{3}\"",
                             config.Streams.Item[i].Name,
@@ -186,7 +206,7 @@ namespace PhaseOptDcs
                     try
                     {
                         dropOut.WorkingPoint.DewPoint.Value = umrCallerList[i]
-                            .DewP(dropOut.WorkingPoint.Temperature.GetUMRConverted());
+                            .Dewp(dropOut.WorkingPoint.Temperature.GetUMRConverted(), dropOut.WorkingPoint.DewPoint.Value);
                         logger.Debug(CultureInfo.InvariantCulture,
                             "Stream: \"{0}\" Working point \"{1}\": Dew point: Pressure: {2} Unit: \"{3}\" Pressure tag: \"{4}\"",
                             config.Streams.Item[i].Name, dropOut.WorkingPoint.Name,
@@ -201,7 +221,7 @@ namespace PhaseOptDcs
                         dropOut.WorkingPoint.DropoutPoint.Value = umrCallerList[i]
                             .DropoutSearch(dropOut.WorkingPoint.DropoutPoint.DropoutPercent,
                                 dropOut.WorkingPoint.Temperature.GetUMRConverted(),
-                                dropOut.WorkingPoint.DewPoint.GetUMRConverted(), Raw: dropOut.Raw);
+                                dropOut.WorkingPoint.DewPoint.GetUMRConverted(), raw: dropOut.Raw);
                         logger.Debug(CultureInfo.InvariantCulture,
                             "Stream: \"{0}\" Working point \"{1}\": Dropout point: Pressure {2} Unit: \"{3}\" Pressure tag: \"{4}\"",
                             config.Streams.Item[i].Name, dropOut.WorkingPoint.Name,
@@ -218,11 +238,11 @@ namespace PhaseOptDcs
                                 dropOut.WorkingPoint.Temperature.GetUMRConverted());
                         if (dropOut.Raw)
                         {
-                            dropOut.WorkingPoint.DropoutValue.Value = dropoutResult[0] * 100.0;
+                            dropOut.WorkingPoint.DropoutValue.Value = dropoutResult.ldom1 * 100.0;
                         }
                         else
                         {
-                            dropOut.WorkingPoint.DropoutValue.Value = dropoutResult[1] * 100.0;
+                            dropOut.WorkingPoint.DropoutValue.Value = dropoutResult.ldom2 * 100.0;
                         }
                         
                         logger.Debug(CultureInfo.InvariantCulture,
