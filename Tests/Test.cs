@@ -458,5 +458,18 @@ namespace Tests
             Assert.AreEqual(expected[2], result.ldov1, 1.0e-3);
             Assert.AreEqual(expected[3], result.ldov2, 1.0e-3);
         }
+
+        [TestMethod]
+        public void TuneFluid()
+        {
+            PhaseOptDcs.Umrol umrol = new PhaseOptDcs.Umrol(ids, composition);
+            umrol.TuneFluid();
+            PhaseOptDcs.Ccdb result = umrol.Cricondenbar(100.0, 258.0);
+
+            double[] expected = { 102.70644183416010 + 2.4, -12.1 };
+            // bara and K
+            Assert.AreEqual(expected[0], result.p, 1.0e-1);
+            Assert.AreEqual(expected[1] + 273.15, result.t, 1.0e-1);
+        }
     }
 }

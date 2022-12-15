@@ -44,6 +44,9 @@ namespace PhaseOptDcs
         [DllImport("umrol", EntryPoint = "umrol_dropout_search")]
         internal static extern double UmrolDropoutSearch(UmrolHandle umrol, double wd, double t, double p_max, double limit, int max_itr, bool raw);
 
+        [DllImport("umrol", EntryPoint = "umrol_tune_fluid")]
+        internal static extern void UmrolTuneFluid(UmrolHandle umrol);
+
     }
 
     internal class UmrolHandle : SafeHandle
@@ -105,9 +108,9 @@ namespace PhaseOptDcs
             return NativeMethods.UmrolDropoutSearch(umrol, wd, t, p_max, limit, max_itr, raw);
         }
 
-        public void FluidTune()
+        public void TuneFluid()
         {
-
+            NativeMethods.UmrolTuneFluid(umrol);
         }
 
         public void Dispose()
