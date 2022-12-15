@@ -229,7 +229,7 @@ namespace PhaseOptDcs
                             dropOut.WorkingPoint.DropoutPoint.Unit,
                             dropOut.WorkingPoint.DropoutPoint.Tag);
                         logger.Debug(CultureInfo.InvariantCulture,
-                            "Stream: \"{0}\" Working point: \"{1}\": Dropout point margin: {2} tag: \"{3}\"",
+                            "Stream: \"{0}\" Working point \"{1}\": Dropout point margin: {2} tag: \"{3}\"",
                             config.Streams.Item[i].Name, dropOut.WorkingPoint.Name,
                             dropOut.WorkingPoint.GetDropoutMargin(), dropOut.WorkingPoint.DropoutPointMargin.Tag);
 
@@ -246,7 +246,7 @@ namespace PhaseOptDcs
                         }
                         
                         logger.Debug(CultureInfo.InvariantCulture,
-                            "Stream: \"{0}\" Working point: \"{1}\" Dropout value: {2} tag: \"{3}\"",
+                            "Stream: \"{0}\" Working point \"{1}\" Dropout value: {2} tag: \"{3}\"",
                             config.Streams.Item[i].Name, dropOut.WorkingPoint.Name,
                             dropOut.WorkingPoint.GetDropoutValue(), dropOut.WorkingPoint.DropoutValue.Tag);
                     }
