@@ -299,7 +299,7 @@ namespace PhaseOptDcs
         [XmlAttribute]
         public string Type { get; set; }
 
-        [XmlIgnore]
+        [XmlAttribute]
         public double Value { get; set; }
     }
 
