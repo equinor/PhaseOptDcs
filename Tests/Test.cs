@@ -463,7 +463,7 @@ namespace Tests
         public void TuneFluid()
         {
             PhaseOptDcs.Umrol umrol = new PhaseOptDcs.Umrol(ids, composition);
-            umrol.TuneFluid();
+            umrol.TuneFluid(100.0, 258.0);
             PhaseOptDcs.Ccdb result = umrol.Cricondenbar(100.0, 258.0);
 
             double[] expected = { 102.70644183416010 + 2.4, -12.1 };
