@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Reflection;
+using System.Runtime.ConstrainedExecution;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -18,7 +20,12 @@ namespace PhaseOptDcs
 
         public PhaseOptDcsService()
         {
-            logger.Info("Initializing PhaseOptDcsService.");
+            AssemblyName assemName = Assembly.GetExecutingAssembly().GetName();
+            Version ver = assemName.Version;
+            string title = assemName.Name;
+
+            logger.Info("Initializing \"{0}\" version \"{1}\".", title, ver.ToString());
+
             string ConfigFile = AppDomain.CurrentDomain.BaseDirectory.ToString(CultureInfo.InvariantCulture) + "PhaseOptDcs.config";
             logger.Debug(CultureInfo.InvariantCulture, "Reading configuration from {0}.", ConfigFile);
             try
