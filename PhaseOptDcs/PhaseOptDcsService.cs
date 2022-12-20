@@ -143,6 +143,10 @@ namespace PhaseOptDcs
                     {
                         component.Value = Convert.ToDouble(result[it], CultureInfo.InvariantCulture);
                     }
+                    else
+                    {
+                        component.Value = Double.NaN;
+                    }
 
                     logger.Debug(CultureInfo.InvariantCulture,
                         "Stream: \"{0}\" Component Value: {1} Name: \"{2}\" Id: {3} Tag: \"{4}\"",
@@ -153,18 +157,41 @@ namespace PhaseOptDcs
 
                 foreach (var dropout in stream.LiquidDropouts.Item)
                 {
-                    dropout.WorkingPoint.Pressure.Value = Convert.ToDouble(result[it++], CultureInfo.InvariantCulture);
+                    if (StatusCode.IsGood(errors[it].StatusCode))
+                    {
+                        dropout.WorkingPoint.Pressure.Value = Convert.ToDouble(result[it], CultureInfo.InvariantCulture);
+                    }
+                    else
+                    {
+                        dropout.WorkingPoint.Pressure.Value = Double.NaN;
+                    }
+                    it++;
                     logger.Debug(CultureInfo.InvariantCulture, "Stream: \"{0}\" Working point \"{1}\": Pressure: {2} Unit: \"{3}\" Tag: \"{4}\"",
                         stream.Name, dropout.WorkingPoint.Name, dropout.WorkingPoint.Pressure.Value,
                         dropout.WorkingPoint.Pressure.Unit, dropout.WorkingPoint.Pressure.Tag);
 
-                    dropout.WorkingPoint.Temperature.Value = Convert.ToDouble(result[it++], CultureInfo.InvariantCulture);
+                    if (StatusCode.IsGood(errors[it].StatusCode))
+                    {
+                        dropout.WorkingPoint.Temperature.Value = Convert.ToDouble(result[it], CultureInfo.InvariantCulture);
+                    }
+                    else
+                    {
+                        dropout.WorkingPoint.Temperature.Value = Double.NaN;
+                    }
+                    it++;
                     logger.Debug(CultureInfo.InvariantCulture, "Stream: \"{0}\" Working point \"{1}\": Temperature: {2} Unit: \"{3}\" Tag: \"{4}\"",
                         stream.Name, dropout.WorkingPoint.Name, dropout.WorkingPoint.Temperature.Value,
                         dropout.WorkingPoint.Temperature.Unit, dropout.WorkingPoint.Temperature.Tag);
                 }
 
-                umrCallerList.Add(new Umrol(stream.Composition.GetIds(), stream.Composition.GetScaledValues()));
+                if (stream.Composition.IsValid())
+                {
+                    umrCallerList.Add(new Umrol(stream.Composition.GetIds(), stream.Composition.GetScaledValues()));
+                }
+                else
+                {
+                    logger.Error(CultureInfo.InvariantCulture, "Invalid composition for stream: {0}.", stream.Name);
+                }
             }
 
             return umrCallerList;
@@ -273,7 +300,7 @@ namespace PhaseOptDcs
 
             foreach (var stream in config.Streams.Item)
             {
-                if (stream.Cricondenbar.Pressure.Tag != null)
+                if (!string.IsNullOrEmpty(stream.Cricondenbar.Pressure.Tag) && stream.Cricondenbar.Pressure.IsValid())
                 {
                     wvc.Add(new WriteValue
                     {
@@ -283,7 +310,7 @@ namespace PhaseOptDcs
                     });
                 }
 
-                if (stream.Cricondenbar.Temperature.Tag != null)
+                if (!string.IsNullOrEmpty(stream.Cricondenbar.Temperature.Tag) && stream.Cricondenbar.Temperature.IsValid())
                 {
 
                     wvc.Add(new WriteValue
