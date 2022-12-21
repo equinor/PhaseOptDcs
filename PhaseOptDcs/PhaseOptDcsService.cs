@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
-using System.Runtime.ConstrainedExecution;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -86,6 +85,8 @@ namespace PhaseOptDcs
                     logger.Info(CultureInfo.InvariantCulture, "Resetting interval to {0}ms.", timer.Interval);
                 }
             }
+
+            logger.Debug(CultureInfo.InvariantCulture, "Worker done.");
         }
 
         private List<Umrol> ReadFromOPC()
@@ -134,9 +135,11 @@ namespace PhaseOptDcs
                     nodes[n].ToString(), result[n], errors[n].StatusCode.ToString());
             }
 
+            // Create Umrol instances
             int it = 0;
             foreach (var stream in config.Streams.Item)
             {
+                // Composition
                 foreach (var component in stream.Composition.Item)
                 {
                     if (StatusCode.IsGood(errors[it].StatusCode))
@@ -146,6 +149,7 @@ namespace PhaseOptDcs
                     else
                     {
                         component.Value = Double.NaN;
+                        logger.Error(CultureInfo.InvariantCulture, "Bad status for tag \"{0}\", status \"{1}\"", component.Tag, errors[it].ToString());
                     }
 
                     logger.Debug(CultureInfo.InvariantCulture,
@@ -155,6 +159,16 @@ namespace PhaseOptDcs
                     it++;
                 }
 
+                if (stream.Composition.IsValid())
+                {
+                    umrCallerList.Add(new Umrol(stream.Composition.GetIds(), stream.Composition.GetScaledValues()));
+                }
+                else
+                {
+                    logger.Error(CultureInfo.InvariantCulture, "Invalid composition for stream: {0}.", stream.Name);
+                }
+
+                // Liquid dropouts
                 foreach (var dropout in stream.LiquidDropouts.Item)
                 {
                     if (StatusCode.IsGood(errors[it].StatusCode))
@@ -164,6 +178,7 @@ namespace PhaseOptDcs
                     else
                     {
                         dropout.WorkingPoint.Pressure.Value = Double.NaN;
+                        logger.Error(CultureInfo.InvariantCulture, "Bad status for tag \"{0}\", status \"{1}\"", dropout.WorkingPoint.Pressure.Tag, errors[it].ToString());
                     }
                     it++;
                     logger.Debug(CultureInfo.InvariantCulture, "Stream: \"{0}\" Working point \"{1}\": Pressure: {2} Unit: \"{3}\" Tag: \"{4}\"",
@@ -177,20 +192,12 @@ namespace PhaseOptDcs
                     else
                     {
                         dropout.WorkingPoint.Temperature.Value = Double.NaN;
+                        logger.Error(CultureInfo.InvariantCulture, "Bad status for tag \"{0}\", status \"{1}\"", dropout.WorkingPoint.Temperature.Tag, errors[it].ToString());
                     }
                     it++;
                     logger.Debug(CultureInfo.InvariantCulture, "Stream: \"{0}\" Working point \"{1}\": Temperature: {2} Unit: \"{3}\" Tag: \"{4}\"",
                         stream.Name, dropout.WorkingPoint.Name, dropout.WorkingPoint.Temperature.Value,
                         dropout.WorkingPoint.Temperature.Unit, dropout.WorkingPoint.Temperature.Tag);
-                }
-
-                if (stream.Composition.IsValid())
-                {
-                    umrCallerList.Add(new Umrol(stream.Composition.GetIds(), stream.Composition.GetScaledValues()));
-                }
-                else
-                {
-                    logger.Error(CultureInfo.InvariantCulture, "Invalid composition for stream: {0}.", stream.Name);
                 }
             }
 
