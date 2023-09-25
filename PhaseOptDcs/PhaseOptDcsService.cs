@@ -211,7 +211,7 @@ namespace PhaseOptDcs
             {
                 if (config.Streams.Item[i].FluidTune)
                 {
-                    umrCallerList[i].TuneFluid();
+                    umrCallerList[i].TuneFluid(0.0, 0.0);
                 }
 
                 if (!string.IsNullOrEmpty(config.Streams.Item[i].Cricondenbar.Pressure.Tag) ||
