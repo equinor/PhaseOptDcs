@@ -405,6 +405,18 @@ namespace Tests
         }
 
         [TestMethod]
+        public void Cricondentherm()
+        {
+            PhaseOptDcs.Umrol umrol = new PhaseOptDcs.Umrol(ids, composition);
+            PhaseOptDcs.Ccdb result = umrol.Cricondentherm(-1.0, -1.0);
+
+            double[] expected = { 44.105980716914821, 21.327194366953904 };
+            // bara and K
+            Assert.AreEqual(expected[0], result.p, 1.0e-1);
+            Assert.AreEqual(expected[1] + 273.15, result.t, 1.0e-3);
+        }
+
+        [TestMethod]
         public void DropoutSearch()
         {
             PhaseOptDcs.Umrol umrol = new PhaseOptDcs.Umrol(ids, composition);

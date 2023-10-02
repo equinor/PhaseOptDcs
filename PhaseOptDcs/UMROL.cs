@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Globalization;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace PhaseOptDcs
@@ -34,6 +32,9 @@ namespace PhaseOptDcs
 
         [DllImport("umrol", EntryPoint = "umrol_cricondenbar")]
         internal static extern Ccdb UmrolCricondenbar(UmrolHandle umrol, double p0, double t0);
+
+        [DllImport("umrol", EntryPoint = "umrol_cricondentherm")]
+        internal static extern Ccdb UmrolCricondentherm(UmrolHandle umrol, double p0, double t0);
 
         [DllImport("umrol", EntryPoint = "umrol_dewp")]
         internal static extern double UmrolDewp(UmrolHandle umrol, double t, double p0);
@@ -91,6 +92,11 @@ namespace PhaseOptDcs
         public Ccdb Cricondenbar(double p0 = -1.0, double t0 = -1.0)
         {
             return NativeMethods.UmrolCricondenbar(umrol, p0, t0);
+        }
+
+        public Ccdb Cricondentherm(double p0 = -1.0, double t0 = -1.0)
+        {
+            return NativeMethods.UmrolCricondentherm(umrol, p0, t0);
         }
 
         public double Dewp(double t, double p0 = 0.0)
