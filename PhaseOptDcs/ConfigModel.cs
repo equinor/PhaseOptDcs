@@ -112,6 +112,21 @@ namespace PhaseOptDcs
 
             return vs.ToArray();
         }
+
+        public bool IsValid()
+        {
+            bool valid = true;
+            foreach (var component in Item)
+            {
+                if (Double.IsNaN(component.Value))
+                {
+                    valid = false;
+                    break;
+                }
+            }
+
+            return valid;
+        }
     }
 
     public class Component
@@ -124,7 +139,7 @@ namespace PhaseOptDcs
         public string Tag { get; set; }
         [XmlAttribute]
         public double ScaleFactor { get; set; }
-        [XmlIgnore]
+        [XmlAttribute]
         public double Value { get; set; }
 
         public double GetScaledValue()
@@ -299,7 +314,7 @@ namespace PhaseOptDcs
         [XmlAttribute]
         public string Type { get; set; }
 
-        [XmlIgnore]
+        [XmlAttribute]
         public double Value { get; set; }
     }
 
@@ -347,6 +362,21 @@ namespace PhaseOptDcs
 
             return (result);
         }
+
+        public bool IsValid()
+        {
+            if (Double.IsNaN(Value))
+            {
+                return false;
+            }
+            // Negative pressure is invalid
+            if (GetUnitConverted() < 1.0e-10)
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 
     public class TemperatureMeasurement : Measurement
@@ -392,6 +422,37 @@ namespace PhaseOptDcs
             }
 
             return (result);
+        }
+
+        public bool IsValid()
+        {
+            if (Double.IsNaN(Value))
+            {
+                return false;
+            }
+
+            // Negative Kelvin is invalid
+            const double zeroCelsius = 273.15;
+            switch (Unit)
+            {
+                case ConfigModel.TemperatureUnit.C:
+                    if (Value - zeroCelsius < -zeroCelsius + 1.0e-10)
+                    {
+                        return false;
+                    }
+                    break;
+                case ConfigModel.TemperatureUnit.K:
+                    if (Value < 1.0e-10)
+                    {
+                        return false;
+                    }
+                    break;
+                default:
+                    return false;
+            }
+
+            return true;
+
         }
     }
 
