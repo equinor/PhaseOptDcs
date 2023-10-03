@@ -33,7 +33,7 @@ namespace PhaseOptDcs
 
         public static ConfigModel ReadConfig(string file)
         {
-            XmlReaderSettings readerSettings = new XmlReaderSettings
+            XmlReaderSettings readerSettings = new()
             {
                 IgnoreComments = true,
                 IgnoreProcessingInstructions = true,
@@ -41,7 +41,7 @@ namespace PhaseOptDcs
             };
 
             XmlReader configFileReader = XmlReader.Create(file, readerSettings);
-            XmlSerializer configSerializer = new XmlSerializer(typeof(ConfigModel));
+            XmlSerializer configSerializer = new(typeof(ConfigModel));
             ConfigModel result = (ConfigModel)configSerializer.Deserialize(configFileReader);
             configFileReader.Close();
 
@@ -79,7 +79,7 @@ namespace PhaseOptDcs
 
         public double[] GetValues()
         {
-            List<double> vs = new List<double>();
+            List<double> vs = new();
 
             foreach (var component in Item)
             {
@@ -91,7 +91,7 @@ namespace PhaseOptDcs
 
         public double[] GetScaledValues()
         {
-            List<double> vs = new List<double>();
+            List<double> vs = new();
 
             foreach (var component in Item)
             {
@@ -103,7 +103,7 @@ namespace PhaseOptDcs
 
         public Int32[] GetIds()
         {
-            List<Int32> vs = new List<Int32>();
+            List<Int32> vs = new();
 
             foreach (var component in Item)
             {

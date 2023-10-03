@@ -14,7 +14,7 @@ namespace PhaseOptDcs
         private readonly ConfigModel config;
         private readonly OpcClient opcClient;
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        private readonly object WorkerLock = new object();
+        private readonly object WorkerLock = new();
         private bool working = false;
 
         public PhaseOptDcsService()
@@ -92,11 +92,11 @@ namespace PhaseOptDcs
         private List<Umrol> ReadFromOPC()
         {
             // One umrCaller for each stream
-            List<Umrol> umrCallerList = new List<Umrol>();
-            NodeIdCollection nodes = new NodeIdCollection();
-            List<Type> types = new List<Type>();
-            List<object> result = new List<object>();
-            List<ServiceResult> errors = new List<ServiceResult>();
+            List<Umrol> umrCallerList = new();
+            NodeIdCollection nodes = new();
+            List<Type> types = new();
+            List<object> result = new();
+            List<ServiceResult> errors = new();
 
             // Make a list of all the OPC item that we want to read
             foreach (var stream in config.Streams.Item)
@@ -316,7 +316,7 @@ namespace PhaseOptDcs
         private void WriteToOPC()
         {
             // Make a list of all the OPC item that we want to write
-            WriteValueCollection wvc = new WriteValueCollection();
+            WriteValueCollection wvc = new();
 
             foreach (var stream in config.Streams.Item)
             {
