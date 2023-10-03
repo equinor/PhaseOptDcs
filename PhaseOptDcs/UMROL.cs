@@ -71,6 +71,10 @@ namespace PhaseOptDcs
         private readonly UmrolHandle umrol;
         private bool disposed = false;
 
+        public Umrol()
+        {
+            umrol = NativeMethods.UmrolNew();
+        }
         public Umrol(int[] id, double[] composition)
         {
             umrol = NativeMethods.UmrolNew();

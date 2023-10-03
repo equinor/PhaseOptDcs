@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Opc.Ua;
+using System;
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Serialization;
@@ -26,6 +27,8 @@ namespace PhaseOptDcs
         public string OpcUser { get; set; }
         [XmlElement]
         public string OpcPassword { get; set; }
+        [XmlElement]
+        public string DefaultNamespaceURI { get; set; }
         [XmlElement]
         public double Interval { get; set; }
         [XmlElement]
@@ -69,11 +72,16 @@ namespace PhaseOptDcs
         public Cricondenbar Cricondenbar { get; set; } = new Cricondenbar();
         [XmlElement]
         public LiquidDropoutList LiquidDropouts { get; set; } = new LiquidDropoutList();
+
+        public Umrol Umrol { get; set; }
     }
 
     public class CompositionList
     {
         public CompositionList() { Item = new List<Component>(); }
+        [XmlAttribute]
+        public int SamplingInterval { get; set; } = 180000;
+
         [XmlElement("Component")]
         public List<Component> Item { get; }
 
@@ -129,23 +137,44 @@ namespace PhaseOptDcs
         }
     }
 
-    public class Component
+    public class Measurement
     {
         [XmlAttribute]
         public string Name { get; set; }
         [XmlAttribute]
-        public Int32 Id { get; set; }
+        public string NamespaceURI { get; set; }
         [XmlAttribute]
-        public string Tag { get; set; }
+        public string Identifier { get; set; }
+        [XmlAttribute]
+        public string StartIdentifier { get; set; }
+        [XmlAttribute]
+        public string RelativePath { get; set; }
         [XmlAttribute]
         public double ScaleFactor { get; set; }
         [XmlAttribute]
+        public string Type { get; set; }
+        [XmlAttribute]
         public double Value { get; set; }
+        [XmlAttribute]
+        public int SamplingInterval { get; set; } = -2;
+
+        [XmlIgnore]
+        public StatusCode Quality { get; set; }
+
+        [XmlIgnore]
+        public string NodeId { get; set; }
 
         public double GetScaledValue()
         {
             return Value * ScaleFactor;
         }
+    }
+
+
+    public class Component : Measurement
+    {
+        [XmlAttribute]
+        public Int32 Id { get; set; }
     }
 
     public class Cricondenbar
@@ -303,19 +332,6 @@ namespace PhaseOptDcs
         }
 
 
-    }
-
-    public class Measurement
-    {
-        [XmlAttribute]
-        public string Name { get; set; }
-        [XmlAttribute]
-        public string Tag { get; set; }
-        [XmlAttribute]
-        public string Type { get; set; }
-
-        [XmlAttribute]
-        public double Value { get; set; }
     }
 
     public class PressureMeasurement : Measurement
