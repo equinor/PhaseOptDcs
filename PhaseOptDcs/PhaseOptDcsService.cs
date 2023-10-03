@@ -103,7 +103,10 @@ namespace PhaseOptDcs
             {
                 foreach (var component in stream.Composition.Item)
                 {
-                    nodes.Add(component.Tag); types.Add(typeof(object));
+                    if (!string.IsNullOrEmpty(component.Tag))
+                    { 
+                        nodes.Add(component.Tag); types.Add(typeof(object));
+                    }
                 }
 
                 foreach (var dropout in stream.LiquidDropouts.Item)
@@ -121,7 +124,10 @@ namespace PhaseOptDcs
             // Read all of the inputs
             try
             {
-                opcClient.OpcSession.ReadValues(nodes, types, out result, out errors);
+                if (nodes.Count > 0)
+                {
+                    opcClient.OpcSession.ReadValues(nodes, types, out result, out errors);
+                }
             }
             catch (Exception e)
             {
@@ -142,7 +148,8 @@ namespace PhaseOptDcs
                 // Composition
                 foreach (var component in stream.Composition.Item)
                 {
-                    if (StatusCode.IsGood(errors[it].StatusCode))
+                    
+                    if (errors.Count > 0 && errors.Count >= it && StatusCode.IsGood(errors[it].StatusCode))
                     {
                         component.Value = Convert.ToDouble(result[it], CultureInfo.InvariantCulture);
                     }
@@ -248,6 +255,12 @@ namespace PhaseOptDcs
                     {
                         dropOut.WorkingPoint.DewPoint.Value = umrCallerList[i]
                             .Dewp(dropOut.WorkingPoint.Temperature.GetUMRConverted(), dropOut.WorkingPoint.DewPoint.Value);
+                        if (dropOut.WorkingPoint.DewPoint.Value == 1000.0)
+                        {
+                            logger.Warn(CultureInfo.InvariantCulture, "Failed to calculate dew point. Retrying with no initial value.");
+                            dropOut.WorkingPoint.DewPoint.Value = umrCallerList[i]
+                                .Dewp(dropOut.WorkingPoint.Temperature.GetUMRConverted(), -1.0);
+                        }
                         logger.Debug(CultureInfo.InvariantCulture,
                             "Stream: \"{0}\" Working point \"{1}\": Dew point: Pressure: {2} Unit: \"{3}\" Pressure tag: \"{4}\"",
                             config.Streams.Item[i].Name, dropOut.WorkingPoint.Name,
