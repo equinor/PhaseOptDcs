@@ -1,4 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Target Name="CustomBuildTask" BeforeTargets="PrepareForBuild">
+    <Exec Command="git describe --tags --dirty" ConsoleToMSBuild="true">
+      <Output TaskParameter="ConsoleOutput" PropertyName="BuildOutput" />
+    </Exec>
+    <PropertyGroup>
+      <InformationalVersion>$(BuildOutput)</InformationalVersion>
+    </PropertyGroup>
+    <ItemGroup>
+      <AssemblyMetadata Include="GitInfo" Value="$(BuildOutput)" />
+    </ItemGroup>
+  </Target>
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <OutputType>Exe</OutputType>
@@ -16,10 +27,11 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>0.1.0.0</ApplicationVersion>
+    <FileVersion>0.0.0.0</FileVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>false</BootstrapperEnabled>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <AssemblyTitle>PhaseOptDcs</AssemblyTitle>
     <Company>Equinor</Company>
     <Product>PhaseOptDcs</Product>

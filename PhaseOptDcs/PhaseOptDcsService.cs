@@ -19,16 +19,16 @@ namespace PhaseOptDcs
 
         public PhaseOptDcsService()
         {
-            AssemblyName assemName = Assembly.GetExecutingAssembly().GetName();
-            Version ver = assemName.Version;
-            string title = assemName.Name;
+            Assembly assem = Assembly.GetExecutingAssembly();
+            string version = assem.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+            string title = assem.GetName().Name;
 
-            logger.Info("Initializing \"{0}\" version \"{1}\".", title, ver.ToString());
+            logger.Info("Initializing \"{0}\" version \"{1}\".", title, version.ToString());
 
             string ConfigFile = AppDomain.CurrentDomain.BaseDirectory.ToString(CultureInfo.InvariantCulture) + "PhaseOptDcs.config";
-            logger.Debug(CultureInfo.InvariantCulture, "Reading configuration from {0}.", ConfigFile);
             try
             {
+                logger.Debug(CultureInfo.InvariantCulture, "Reading configuration from {0}.", ConfigFile);
                 config = ConfigModel.ReadConfig(ConfigFile);
             }
             catch (Exception e)
