@@ -1,11 +1,11 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhaseOptDcs", "PhaseOptDcs\PhaseOptDcs.csproj", "{A43A61A1-657E-4EB8-AA3F-C9A8802FD77D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhaseOptDcs", "PhaseOptDcs\PhaseOptDcs.csproj", "{A43A61A1-657E-4EB8-AA3F-C9A8802FD77D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{90A157E1-4FE8-4F9C-A856-094377CBA2BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{90A157E1-4FE8-4F9C-A856-094377CBA2BF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
