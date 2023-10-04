@@ -39,7 +39,6 @@
   <xsd:complexType name="ComponentType">
     <xsd:simpleContent>
       <xsd:extension base="xs:string">
-        <xsd:attribute name="Name" use="optional" />
         <xsd:attribute name="Id" use="required" />
         <xsd:attributeGroup ref="MeasurementType"></xsd:attributeGroup>
       </xsd:extension>
@@ -47,15 +46,27 @@
   </xsd:complexType>
 
   <xsd:attributeGroup name="MeasurementType">
+    <xsd:attribute type="xs:string" name="Name" use="optional" />
     <xsd:attribute type="xs:string" name="NamespaceURI" use="optional" />
     <xsd:attribute type="xs:string" name="Identifier" use="optional" />
-    <xsd:attribute type="xs:string" name="RelativePath" use="optional" />
     <xsd:attribute type="xs:string" name="StartIdentifier" use="optional" />
-    <xsd:attribute type="xs:double" name="Value" use="optional" />
+    <xsd:attribute type="xs:string" name="RelativePath" use="optional" />
     <xsd:attribute type="xs:double" name="ScaleFactor" use="optional" />
+    <xsd:attribute name="Type" use="optional">
+      <xsd:simpleType>
+        <xsd:restriction base="xs:string">
+          <xsd:enumeration value="single" />
+          <xsd:enumeration value="double" />
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute type="xs:double" name="Value" use="optional" />
     <xsd:attribute type="xs:int" name="SamplingInterval" use="optional" />
   </xsd:attributeGroup>
 
+  <xsd:complexType name="DatatypeType">
+
+  </xsd:complexType>
   <xsd:complexType name="CricondenbarType">
     <xsd:all>
       <xsd:element type="PressureType" name="Pressure" maxOccurs="1" minOccurs="0" />
@@ -66,7 +77,6 @@
   <xsd:complexType name="PressureType">
     <xsd:simpleContent>
       <xsd:extension base="xs:string">
-        <xsd:attribute type="xs:string" name="Name" use="optional" />
         <xsd:attributeGroup ref="MeasurementType" />
         <xsd:attribute name="Unit" use="optional">
           <xsd:simpleType>
@@ -83,7 +93,6 @@
   <xsd:complexType name="TemperatureType">
     <xsd:simpleContent>
       <xsd:extension base="xs:string">
-        <xsd:attribute type="xs:string" name="Name" use="optional" />
         <xsd:attributeGroup ref="MeasurementType" />
         <xsd:attribute name="Unit" use="optional">
           <xsd:simpleType>
@@ -97,83 +106,43 @@
     </xsd:simpleContent>
   </xsd:complexType>
 
+  <xsd:complexType name="LiquidDropoutType">
+    <xsd:sequence>
+      <xsd:element type="WorkingPointType" name="WorkingPoint" maxOccurs="unbounded" minOccurs="1" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="WorkingPointType">
+    <xsd:all>
+      <xsd:element type="PressureType" name="Pressure" maxOccurs="1" minOccurs="1" />
+      <xsd:element type="TemperatureType" name="Temperature" maxOccurs="1" minOccurs="1" />
+      <xsd:element type="PressureType" name="DewPoint" maxOccurs="1" minOccurs="0" />
+      <xsd:element type="PressureType" name="DewPointMargin" maxOccurs="1" minOccurs="0" />
+      <xsd:element type="PressureType" name="DewPoint" maxOccurs="1" minOccurs="0" />
+      <xsd:element type="DropoutType" name="DropoutPoint" maxOccurs="1" minOccurs="0" />
+      <xsd:element type="PressureType" name="DropoutPointMargin" maxOccurs="1" minOccurs="0" />
+    </xsd:all>
+    <xsd:attribute type="xs:string" name="Name" use="optional" />
+    <xsd:attribute type="xs:string" name="Raw" use="optional" />
+  </xsd:complexType>
+
+  <xsd:complexType name="DropoutType">
+    <xsd:simpleContent>
+      <xsd:extension base="xs:string">
+        <xsd:attributeGroup ref="MeasurementType" />
+        <xsd:attribute type="xs:double" name="DropoutPercent" use="required" />
+        <xsd:attribute name="Unit" use="optional">
+          <xsd:simpleType>
+            <xsd:restriction base="xs:string">
+              <xsd:enumeration value="bara" />
+              <xsd:enumeration value="barg" />
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:simpleContent>
+
+  </xsd:complexType>
 
 
 </xs:schema>
-<!--
-  <xsd:element name="configuration">
-    <xsd:complexType>
-      <xsd:sequence>
-        <xsd:element name="OpcUrl" type="xsd:string" />
-        <xsd:element name="OpcUser" type="xsd:string" />
-        <xsd:element name="OpcPassword" type="xsd:string" />
-        <xsd:element name="Interval" type="xsd:decimal" />
-        <xsd:element name="Streams">
-          <xsd:complexType>
-            <xsd:sequence>
-              <xsd:element maxOccurs="unbounded" name="Stream">
-                <xsd:complexType>
-                  <xsd:sequence>
-                    <xsd:element minOccurs="1" name="Composition">
-                      <xsd:complexType>
-                        <xsd:sequence>
-                          <xsd:element maxOccurs="100" name="Component">
-                            <xsd:complexType>
-                              <xsd:attribute name="Name" type="xsd:string" use="required" />
-                              <xsd:attribute name="Id" type="xsd:unsignedShort" use="required" />
-                              <xsd:attribute name="Tag" type="xsd:string" use="required" />
-                              <xsd:attribute name="ScaleFactor" type="xsd:decimal" use="required" />
-                            </xsd:complexType>
-                          </xsd:element>
-                        </xsd:sequence>
-                      </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element minOccurs="0" name="Cricondenbar">
-                      <xsd:complexType>
-                        <xsd:attribute name="TemperatureTag" type="xsd:string" use="required" />
-                        <xsd:attribute name="TemperatureType" type="xsd:string" use="optional" />
-                        <xsd:attribute name="PressureTag" type="xsd:string" use="required" />
-                        <xsd:attribute name="PressureType" type="xsd:string" use="optional" />
-                      </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element minOccurs="0" name="LiquidDropouts">
-                      <xsd:complexType>
-                        <xsd:sequence>
-                          <xsd:element name="LiquidDropout">
-                            <xsd:complexType>
-                              <xsd:sequence>
-                                <xsd:element name="WorkingPoint">
-                                  <xsd:complexType>
-                                    <xsd:attribute name="Name" type="xsd:string" use="required" />
-                                    <xsd:attribute name="PressureTag" type="xsd:string"
-                                      use="required" />
-                                    <xsd:attribute name="TemperatureTag" type="xsd:string"
-                                      use="required" />
-                                    <xsd:attribute name="MarginTag" type="xsd:string" use="required" />
-                                    <xsd:attribute name="MarginType" type="xsd:string"
-                                      use="optional" />
-                                    <xsd:attribute name="DewPointTag" type="xsd:string"
-                                      use="required" />
-                                    <xsd:attribute name="DewPointType" type="xsd:string"
-                                      use="optional" />
-                                  </xsd:complexType>
-                                </xsd:element>
-                              </xsd:sequence>
-                            </xsd:complexType>
-                          </xsd:element>
-                        </xsd:sequence>
-                      </xsd:complexType>
-                    </xsd:element>
-                  </xsd:sequence>
-                  <xsd:attribute name="Name" type="xsd:string" use="required" />
-                  <xsd:attribute name="FluidTune" type="xsd:boolean" use="required" />
-                </xsd:complexType>
-              </xsd:element>
-            </xsd:sequence>
-          </xsd:complexType>
-        </xsd:element>
-      </xsd:sequence>
-    </xsd:complexType>
-  </xsd:element>
-</xs:schema>
--->
