@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Opc.Ua;
+using System;
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Serialization;
@@ -27,13 +28,15 @@ namespace PhaseOptDcs
         [XmlElement]
         public string OpcPassword { get; set; }
         [XmlElement]
+        public string DefaultNamespaceURI { get; set; }
+        [XmlElement]
         public double Interval { get; set; }
         [XmlElement]
         public StreamList Streams { get; set; } = new StreamList();
 
         public static ConfigModel ReadConfig(string file)
         {
-            XmlReaderSettings readerSettings = new XmlReaderSettings
+            XmlReaderSettings readerSettings = new()
             {
                 IgnoreComments = true,
                 IgnoreProcessingInstructions = true,
@@ -41,7 +44,7 @@ namespace PhaseOptDcs
             };
 
             XmlReader configFileReader = XmlReader.Create(file, readerSettings);
-            XmlSerializer configSerializer = new XmlSerializer(typeof(ConfigModel));
+            XmlSerializer configSerializer = new(typeof(ConfigModel));
             ConfigModel result = (ConfigModel)configSerializer.Deserialize(configFileReader);
             configFileReader.Close();
 
@@ -69,17 +72,22 @@ namespace PhaseOptDcs
         public Cricondenbar Cricondenbar { get; set; } = new Cricondenbar();
         [XmlElement]
         public LiquidDropoutList LiquidDropouts { get; set; } = new LiquidDropoutList();
+
+        public Umrol Umrol { get; set; }
     }
 
     public class CompositionList
     {
         public CompositionList() { Item = new List<Component>(); }
+        [XmlAttribute]
+        public int SamplingInterval { get; set; } = 180000;
+
         [XmlElement("Component")]
         public List<Component> Item { get; }
 
         public double[] GetValues()
         {
-            List<double> vs = new List<double>();
+            List<double> vs = new();
 
             foreach (var component in Item)
             {
@@ -91,7 +99,7 @@ namespace PhaseOptDcs
 
         public double[] GetScaledValues()
         {
-            List<double> vs = new List<double>();
+            List<double> vs = new();
 
             foreach (var component in Item)
             {
@@ -103,7 +111,7 @@ namespace PhaseOptDcs
 
         public Int32[] GetIds()
         {
-            List<Int32> vs = new List<Int32>();
+            List<Int32> vs = new();
 
             foreach (var component in Item)
             {
@@ -129,23 +137,44 @@ namespace PhaseOptDcs
         }
     }
 
-    public class Component
+    public class Measurement
     {
         [XmlAttribute]
         public string Name { get; set; }
         [XmlAttribute]
-        public Int32 Id { get; set; }
+        public string NamespaceURI { get; set; }
         [XmlAttribute]
-        public string Tag { get; set; }
+        public string Identifier { get; set; }
+        [XmlAttribute]
+        public string StartIdentifier { get; set; }
+        [XmlAttribute]
+        public string RelativePath { get; set; }
         [XmlAttribute]
         public double ScaleFactor { get; set; }
         [XmlAttribute]
+        public string Type { get; set; }
+        [XmlAttribute]
         public double Value { get; set; }
+        [XmlAttribute]
+        public int SamplingInterval { get; set; } = -2;
+
+        [XmlIgnore]
+        public StatusCode Quality { get; set; }
+
+        [XmlIgnore]
+        public string NodeId { get; set; }
 
         public double GetScaledValue()
         {
             return Value * ScaleFactor;
         }
+    }
+
+
+    public class Component : Measurement
+    {
+        [XmlAttribute]
+        public Int32 Id { get; set; }
     }
 
     public class Cricondenbar
@@ -303,19 +332,6 @@ namespace PhaseOptDcs
         }
 
 
-    }
-
-    public class Measurement
-    {
-        [XmlAttribute]
-        public string Name { get; set; }
-        [XmlAttribute]
-        public string Tag { get; set; }
-        [XmlAttribute]
-        public string Type { get; set; }
-
-        [XmlAttribute]
-        public double Value { get; set; }
     }
 
     public class PressureMeasurement : Measurement
