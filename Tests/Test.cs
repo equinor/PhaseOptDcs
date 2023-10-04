@@ -26,47 +26,46 @@ namespace Tests
             config.Streams.Item[0].Composition.Item.Add(new PhaseOptDcs.Component { Name = "N2", Id = 2, NodeId = "31AI0157A_J", ScaleFactor = 1.0 });
             config.Streams.Item[0].Cricondenbar.Temperature.NodeId = "31TY0157_A";
             config.Streams.Item[0].Cricondenbar.Pressure.NodeId = "31PY0157_A";
-            config.Streams.Item[0].LiquidDropouts.Item.Add(new PhaseOptDcs.LiquidDropout());
+            config.Streams.Item[0].LiquidDropouts.Item.Add(new PhaseOptDcs.WorkingPoint());
             config.Streams.Item[0].LiquidDropouts.Item[0].Raw = true;
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint = new PhaseOptDcs.WorkingPoint
-                { Name = "Kårstø" };
+            config.Streams.Item[0].LiquidDropouts.Item[0].Name = "Kårstø";
             
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.Pressure.Name = "Press Name";
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.Pressure.NodeId = "31PI0157";
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.Pressure.Value = 5.5;
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.Pressure.Unit = PhaseOptDcs.ConfigModel.PressureUnit.bara;
+            config.Streams.Item[0].LiquidDropouts.Item[0].Pressure.Name = "Press Name";
+            config.Streams.Item[0].LiquidDropouts.Item[0].Pressure.NodeId = "31PI0157";
+            config.Streams.Item[0].LiquidDropouts.Item[0].Pressure.Value = 5.5;
+            config.Streams.Item[0].LiquidDropouts.Item[0].Pressure.Unit = PhaseOptDcs.ConfigModel.PressureUnit.bara;
 
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.Temperature.Name = "Temperature Name";
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.Temperature.NodeId = "31TI0157";
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.Temperature.Value = 5.5;
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.Temperature.Unit = PhaseOptDcs.ConfigModel.TemperatureUnit.C;
+            config.Streams.Item[0].LiquidDropouts.Item[0].Temperature.Name = "Temperature Name";
+            config.Streams.Item[0].LiquidDropouts.Item[0].Temperature.NodeId = "31TI0157";
+            config.Streams.Item[0].LiquidDropouts.Item[0].Temperature.Value = 5.5;
+            config.Streams.Item[0].LiquidDropouts.Item[0].Temperature.Unit = PhaseOptDcs.ConfigModel.TemperatureUnit.C;
 
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPointMargin.Name = "Margin Name";
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPointMargin.NodeId = "31DPY0157";
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPointMargin.Value = 5.5;
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPointMargin.Unit = PhaseOptDcs.ConfigModel.PressureUnit.barg;
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPointMargin.Type = "single";
+            config.Streams.Item[0].LiquidDropouts.Item[0].DewPointMargin.Name = "Margin Name";
+            config.Streams.Item[0].LiquidDropouts.Item[0].DewPointMargin.NodeId = "31DPY0157";
+            config.Streams.Item[0].LiquidDropouts.Item[0].DewPointMargin.Value = 5.5;
+            config.Streams.Item[0].LiquidDropouts.Item[0].DewPointMargin.Unit = PhaseOptDcs.ConfigModel.PressureUnit.barg;
+            config.Streams.Item[0].LiquidDropouts.Item[0].DewPointMargin.Type = "single";
 
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPoint.Name = "DewPoint Name";
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPoint.NodeId = "31PY0157";
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPoint.Value = 5.5;
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPoint.Unit = PhaseOptDcs.ConfigModel.PressureUnit.barg;
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DewPoint.Type = "single";
+            config.Streams.Item[0].LiquidDropouts.Item[0].DewPoint.Name = "DewPoint Name";
+            config.Streams.Item[0].LiquidDropouts.Item[0].DewPoint.NodeId = "31PY0157";
+            config.Streams.Item[0].LiquidDropouts.Item[0].DewPoint.Value = 5.5;
+            config.Streams.Item[0].LiquidDropouts.Item[0].DewPoint.Unit = PhaseOptDcs.ConfigModel.PressureUnit.barg;
+            config.Streams.Item[0].LiquidDropouts.Item[0].DewPoint.Type = "single";
 
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutPoint.Name = "DropoutPoint Name";
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutPoint.NodeId = "31DPY0158";
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutPoint.Unit = PhaseOptDcs.ConfigModel.PressureUnit.barg;
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutPoint.Type = "single";
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutPoint.DropoutPercent = 2.0;
+            config.Streams.Item[0].LiquidDropouts.Item[0].DropoutPoint.Name = "DropoutPoint Name";
+            config.Streams.Item[0].LiquidDropouts.Item[0].DropoutPoint.NodeId = "31DPY0158";
+            config.Streams.Item[0].LiquidDropouts.Item[0].DropoutPoint.Unit = PhaseOptDcs.ConfigModel.PressureUnit.barg;
+            config.Streams.Item[0].LiquidDropouts.Item[0].DropoutPoint.Type = "single";
+            config.Streams.Item[0].LiquidDropouts.Item[0].DropoutPoint.DropoutPercent = 2.0;
 
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutPointMargin.Name = "DropoutPointMargin Name";
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutPointMargin.NodeId = "31DPY0159";
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutPointMargin.Unit = PhaseOptDcs.ConfigModel.PressureUnit.barg;
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutPointMargin.Type = "single";
+            config.Streams.Item[0].LiquidDropouts.Item[0].DropoutPointMargin.Name = "DropoutPointMargin Name";
+            config.Streams.Item[0].LiquidDropouts.Item[0].DropoutPointMargin.NodeId = "31DPY0159";
+            config.Streams.Item[0].LiquidDropouts.Item[0].DropoutPointMargin.Unit = PhaseOptDcs.ConfigModel.PressureUnit.barg;
+            config.Streams.Item[0].LiquidDropouts.Item[0].DropoutPointMargin.Type = "single";
 
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutValue.Name = "DropoutValue Name";
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutValue.NodeId = "31AY0159";
-            config.Streams.Item[0].LiquidDropouts.Item[0].WorkingPoint.DropoutValue.Type = "single";
+            config.Streams.Item[0].LiquidDropouts.Item[0].DropoutValue.Name = "DropoutValue Name";
+            config.Streams.Item[0].LiquidDropouts.Item[0].DropoutValue.NodeId = "31AY0159";
+            config.Streams.Item[0].LiquidDropouts.Item[0].DropoutValue.Type = "single";
 
             // Stream 1
             config.Streams.Item.Add(new PhaseOptDcs.Stream { Name = "Åsgard", FluidTune = true });

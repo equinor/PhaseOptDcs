@@ -218,9 +218,9 @@ namespace PhaseOptDcs
 
     public class LiquidDropoutList
     {
-        public LiquidDropoutList() { Item = new List<LiquidDropout>(); }
-        [XmlElement("LiquidDropout")]
-        public List<LiquidDropout> Item { get; }
+        public LiquidDropoutList() { Item = new List<WorkingPoint>(); }
+        [XmlElement("WorkingPoint")]
+        public List<WorkingPoint> Item { get; }
     }
     public class LiquidDropout
     {
@@ -234,6 +234,8 @@ namespace PhaseOptDcs
     {
         [XmlAttribute]
         public string Name { get; set; }
+        [XmlAttribute]
+        public bool Raw { get; set; }
         [XmlElement]
         public PressureMeasurement Pressure { get; set; } = new PressureMeasurement();
         [XmlElement]

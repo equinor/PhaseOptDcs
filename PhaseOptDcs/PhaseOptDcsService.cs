@@ -98,7 +98,7 @@ namespace PhaseOptDcs
                 foreach (var dropout in stream.LiquidDropouts.Item)
                 {
                     MonitoredItem itemP = new(subscription.DefaultItem);
-                    itemP.StartNodeId = dropout.WorkingPoint.Pressure.NodeId;
+                    itemP.StartNodeId = dropout.Pressure.NodeId;
                     itemP.AttributeId = Attributes.Value;
                     itemP.SamplingInterval = stream.Composition.SamplingInterval;
                     itemP.QueueSize = 1;
@@ -106,15 +106,15 @@ namespace PhaseOptDcs
                     itemP.MonitoringMode = MonitoringMode.Reporting;
                     itemP.Notification += OnMonitoredItemNotification;
 
-                    if (dropout.WorkingPoint.Pressure.SamplingInterval != -2)
+                    if (dropout.Pressure.SamplingInterval != -2)
                     {
-                        itemP.SamplingInterval = dropout.WorkingPoint.Pressure.SamplingInterval;
+                        itemP.SamplingInterval = dropout.Pressure.SamplingInterval;
                     }
 
                     subscription.AddItem(itemP);
 
                     MonitoredItem itemT = new(subscription.DefaultItem);
-                    itemT.StartNodeId = dropout.WorkingPoint.Temperature.NodeId;
+                    itemT.StartNodeId = dropout.Temperature.NodeId;
                     itemT.AttributeId = Attributes.Value;
                     itemT.SamplingInterval = stream.Composition.SamplingInterval;
                     itemT.QueueSize = 1;
@@ -122,9 +122,9 @@ namespace PhaseOptDcs
                     itemT.MonitoringMode = MonitoringMode.Reporting;
                     itemT.Notification += OnMonitoredItemNotification;
 
-                    if (dropout.WorkingPoint.Temperature.SamplingInterval != -2)
+                    if (dropout.Temperature.SamplingInterval != -2)
                     {
-                        itemT.SamplingInterval = dropout.WorkingPoint.Temperature.SamplingInterval;
+                        itemT.SamplingInterval = dropout.Temperature.SamplingInterval;
                     }
 
                     subscription.AddItem(itemT);
@@ -225,56 +225,56 @@ namespace PhaseOptDcs
                 {
                     try
                     {
-                        dropOut.WorkingPoint.DewPoint.Value = stream.Umrol
-                            .Dewp(dropOut.WorkingPoint.Temperature.GetUMRConverted(), dropOut.WorkingPoint.DewPoint.Value);
-                        if (dropOut.WorkingPoint.DewPoint.Value == 1000.0)
+                        dropOut.DewPoint.Value = stream.Umrol
+                            .Dewp(dropOut.Temperature.GetUMRConverted(), dropOut.DewPoint.Value);
+                        if (dropOut.DewPoint.Value == 1000.0)
                         {
                             logger.Warn(CultureInfo.InvariantCulture, "Failed to calculate dew point. Retrying with no initial value.");
-                            dropOut.WorkingPoint.DewPoint.Value = stream.Umrol
-                                .Dewp(dropOut.WorkingPoint.Temperature.GetUMRConverted(), -1.0);
+                            dropOut.DewPoint.Value = stream.Umrol
+                                .Dewp(dropOut.Temperature.GetUMRConverted(), -1.0);
                         }
                         logger.Debug(CultureInfo.InvariantCulture,
                             "Stream: \"{0}\" Working point \"{1}\": Dew point: Pressure: {2} Unit: \"{3}\" Pressure NodeId: \"{4}\"",
-                            stream.Name, dropOut.WorkingPoint.Name,
-                            dropOut.WorkingPoint.DewPoint.GetUnitConverted(),
-                            dropOut.WorkingPoint.DewPoint.Unit,
-                            dropOut.WorkingPoint.DewPoint.NodeId);
+                            stream.Name, dropOut.Name,
+                            dropOut.DewPoint.GetUnitConverted(),
+                            dropOut.DewPoint.Unit,
+                            dropOut.DewPoint.NodeId);
                         logger.Debug(CultureInfo.InvariantCulture,
                             "Stream: \"{0}\" Working point \"{1}\": Dew point margin: {2} NodeId: \"{3}\"",
-                            stream.Name, dropOut.WorkingPoint.Name,
-                            dropOut.WorkingPoint.GetDewPointMargin(), dropOut.WorkingPoint.DewPointMargin.NodeId);
+                            stream.Name, dropOut.Name,
+                            dropOut.GetDewPointMargin(), dropOut.DewPointMargin.NodeId);
 
-                        dropOut.WorkingPoint.DropoutPoint.Value = stream.Umrol
-                            .DropoutSearch(dropOut.WorkingPoint.DropoutPoint.DropoutPercent,
-                                dropOut.WorkingPoint.Temperature.GetUMRConverted(),
-                                dropOut.WorkingPoint.DewPoint.GetUMRConverted(), raw: dropOut.Raw);
+                        dropOut.DropoutPoint.Value = stream.Umrol
+                            .DropoutSearch(dropOut.DropoutPoint.DropoutPercent,
+                                dropOut.Temperature.GetUMRConverted(),
+                                dropOut.DewPoint.GetUMRConverted(), raw: dropOut.Raw);
                         logger.Debug(CultureInfo.InvariantCulture,
                             "Stream: \"{0}\" Working point \"{1}\": Dropout point: Pressure {2} Unit: \"{3}\" Pressure NodeId: \"{4}\"",
-                            stream.Name, dropOut.WorkingPoint.Name,
-                            dropOut.WorkingPoint.DropoutPoint.GetUnitConverted(),
-                            dropOut.WorkingPoint.DropoutPoint.Unit,
-                            dropOut.WorkingPoint.DropoutPoint.NodeId);
+                            stream.Name, dropOut.Name,
+                            dropOut.DropoutPoint.GetUnitConverted(),
+                            dropOut.DropoutPoint.Unit,
+                            dropOut.DropoutPoint.NodeId);
                         logger.Debug(CultureInfo.InvariantCulture,
                             "Stream: \"{0}\" Working point \"{1}\": Dropout point margin: {2} NodeId: \"{3}\"",
-                            stream.Name, dropOut.WorkingPoint.Name,
-                            dropOut.WorkingPoint.GetDropoutMargin(), dropOut.WorkingPoint.DropoutPointMargin.NodeId);
+                            stream.Name, dropOut.Name,
+                            dropOut.GetDropoutMargin(), dropOut.DropoutPointMargin.NodeId);
 
                         var dropoutResult = stream.Umrol
-                            .Dropout(dropOut.WorkingPoint.Pressure.GetUMRConverted(),
-                                dropOut.WorkingPoint.Temperature.GetUMRConverted());
+                            .Dropout(dropOut.Pressure.GetUMRConverted(),
+                                dropOut.Temperature.GetUMRConverted());
                         if (dropOut.Raw)
                         {
-                            dropOut.WorkingPoint.DropoutValue.Value = dropoutResult.ldom1 * 100.0;
+                            dropOut.DropoutValue.Value = dropoutResult.ldom1 * 100.0;
                         }
                         else
                         {
-                            dropOut.WorkingPoint.DropoutValue.Value = dropoutResult.ldom2 * 100.0;
+                            dropOut.DropoutValue.Value = dropoutResult.ldom2 * 100.0;
                         }
 
                         logger.Debug(CultureInfo.InvariantCulture,
                             "Stream: \"{0}\" Working point \"{1}\" Dropout value: {2} NodeId: \"{3}\"",
-                            stream.Name, dropOut.WorkingPoint.Name,
-                            dropOut.WorkingPoint.GetDropoutValue(), dropOut.WorkingPoint.DropoutValue.NodeId);
+                            stream.Name, dropOut.Name,
+                            dropOut.GetDropoutValue(), dropOut.DropoutValue.NodeId);
                     }
                     catch (System.ComponentModel.Win32Exception e)
                     {
@@ -315,53 +315,53 @@ namespace PhaseOptDcs
 
                 foreach (var dropout in stream.LiquidDropouts.Item)
                 {
-                    if (!string.IsNullOrEmpty(dropout.WorkingPoint.DewPointMargin.NodeId))
+                    if (!string.IsNullOrEmpty(dropout.DewPointMargin.NodeId))
                     {
                         wvc.Add(new WriteValue
                         {
-                            NodeId = dropout.WorkingPoint.DewPointMargin.NodeId,
+                            NodeId = dropout.DewPointMargin.NodeId,
                             AttributeId = Attributes.Value,
-                            Value = new DataValue { Value = dropout.WorkingPoint.GetDewPointMargin() }
+                            Value = new DataValue { Value = dropout.GetDewPointMargin() }
                         });
                     }
 
-                    if (!string.IsNullOrEmpty(dropout.WorkingPoint.DewPoint.NodeId))
+                    if (!string.IsNullOrEmpty(dropout.DewPoint.NodeId))
                     {
                         wvc.Add(new WriteValue
                         {
-                            NodeId = dropout.WorkingPoint.DewPoint.NodeId,
+                            NodeId = dropout.DewPoint.NodeId,
                             AttributeId = Attributes.Value,
-                            Value = new DataValue { Value = dropout.WorkingPoint.GetDewPoint() }
+                            Value = new DataValue { Value = dropout.GetDewPoint() }
                         });
                     }
 
-                    if (!string.IsNullOrEmpty(dropout.WorkingPoint.DropoutPointMargin.NodeId))
+                    if (!string.IsNullOrEmpty(dropout.DropoutPointMargin.NodeId))
                     {
                         wvc.Add(new WriteValue
                         {
-                            NodeId = dropout.WorkingPoint.DropoutPointMargin.NodeId,
+                            NodeId = dropout.DropoutPointMargin.NodeId,
                             AttributeId = Attributes.Value,
-                            Value = new DataValue { Value = dropout.WorkingPoint.GetDropoutMargin() }
+                            Value = new DataValue { Value = dropout.GetDropoutMargin() }
                         });
                     }
 
-                    if (!string.IsNullOrEmpty(dropout.WorkingPoint.DropoutPoint.NodeId))
+                    if (!string.IsNullOrEmpty(dropout.DropoutPoint.NodeId))
                     {
                         wvc.Add(new WriteValue
                         {
-                            NodeId = dropout.WorkingPoint.DropoutPoint.NodeId,
+                            NodeId = dropout.DropoutPoint.NodeId,
                             AttributeId = Attributes.Value,
-                            Value = new DataValue { Value = dropout.WorkingPoint.GetDropoutPoint() }
+                            Value = new DataValue { Value = dropout.GetDropoutPoint() }
                         });
                     }
 
-                    if (!string.IsNullOrEmpty(dropout.WorkingPoint.DropoutValue.NodeId))
+                    if (!string.IsNullOrEmpty(dropout.DropoutValue.NodeId))
                     {
                         wvc.Add(new WriteValue
                         {
-                            NodeId = dropout.WorkingPoint.DropoutValue.NodeId,
+                            NodeId = dropout.DropoutValue.NodeId,
                             AttributeId = Attributes.Value,
-                            Value = new DataValue { Value = dropout.WorkingPoint.GetDropoutValue() }
+                            Value = new DataValue { Value = dropout.GetDropoutValue() }
                         });
                     }
                 }
@@ -433,14 +433,14 @@ namespace PhaseOptDcs
 
                         foreach (var dropout in stream.LiquidDropouts.Item)
                         {
-                            if (monitoredItem.StartNodeId.ToString() == dropout.WorkingPoint.Pressure.NodeId)
+                            if (monitoredItem.StartNodeId.ToString() == dropout.Pressure.NodeId)
                             {
-                                dropout.WorkingPoint.Pressure.Value = Convert.ToDouble(notification.Value.Value);
+                                dropout.Pressure.Value = Convert.ToDouble(notification.Value.Value);
                             }
 
-                            if (monitoredItem.StartNodeId.ToString() == dropout.WorkingPoint.Temperature.NodeId)
+                            if (monitoredItem.StartNodeId.ToString() == dropout.Temperature.NodeId)
                             {
-                                dropout.WorkingPoint.Temperature.Value = Convert.ToDouble(notification.Value.Value);
+                                dropout.Temperature.Value = Convert.ToDouble(notification.Value.Value);
                             }
 
                         }
@@ -557,11 +557,11 @@ namespace PhaseOptDcs
 
                 foreach (var dropout in stream.LiquidDropouts.Item)
                 {
-                    list.Add(dropout.WorkingPoint.Pressure);
-                    list.Add(dropout.WorkingPoint.Temperature);
-                    list.Add(dropout.WorkingPoint.DewPoint);
-                    list.Add(dropout.WorkingPoint.DewPointMargin);
-                    list.Add(dropout.WorkingPoint.DropoutPoint);
+                    list.Add(dropout.Pressure);
+                    list.Add(dropout.Temperature);
+                    list.Add(dropout.DewPoint);
+                    list.Add(dropout.DewPointMargin);
+                    list.Add(dropout.DropoutPoint);
                 }
 
                 GenerateNodeIdString(list);
