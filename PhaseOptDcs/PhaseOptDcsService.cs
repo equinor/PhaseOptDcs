@@ -80,6 +80,7 @@ namespace PhaseOptDcs
                     MonitoredItem item = new(subscription.DefaultItem);
                     item.StartNodeId = component.NodeId;
                     item.AttributeId = Attributes.Value;
+                    item.DisplayName = component.Name;
                     item.SamplingInterval = stream.Composition.SamplingInterval;
                     item.QueueSize = 1;
                     item.DiscardOldest = true;
@@ -100,6 +101,7 @@ namespace PhaseOptDcs
                     MonitoredItem itemP = new(subscription.DefaultItem);
                     itemP.StartNodeId = dropout.Pressure.NodeId;
                     itemP.AttributeId = Attributes.Value;
+                    itemP.DisplayName = dropout.Pressure.Name;
                     itemP.SamplingInterval = stream.Composition.SamplingInterval;
                     itemP.QueueSize = 1;
                     itemP.DiscardOldest = true;
@@ -116,6 +118,7 @@ namespace PhaseOptDcs
                     MonitoredItem itemT = new(subscription.DefaultItem);
                     itemT.StartNodeId = dropout.Temperature.NodeId;
                     itemT.AttributeId = Attributes.Value;
+                    itemT.DisplayName = dropout.Temperature.Name;
                     itemT.SamplingInterval = stream.Composition.SamplingInterval;
                     itemT.QueueSize = 1;
                     itemT.DiscardOldest = true;
@@ -135,12 +138,30 @@ namespace PhaseOptDcs
 
             subscription.ApplyChanges();
             subscription.StateChanged += null;
+            foreach (MonitoredItem item in subscription.MonitoredItems)
+            {
+                logger.Debug("Monitored item name {0}, nodeid {1}", item.DisplayName, item.ResolvedNodeId);
+                if (!item.Status.Created)
+                {
+                    logger.Error("Monitored item {0}, {1} not created {2}", item.DisplayName, item.ResolvedNodeId, item.Status.Error);
+                }
+            }
             logger.Info("MonitoredItems created for SubscriptionId = {0}", subscription.Id);
         }
 
         private void Worker(object sender, ElapsedEventArgs ea)
         {
             logger.Debug(CultureInfo.InvariantCulture, "Starting worker.");
+
+            if (opcClient.OpcSession.KeepAliveStopped)
+            {
+                logger.Debug("Server not responding. Suspending Worker.");
+                lock (WorkerLock)
+                {
+                    working = false;
+                }
+                return;
+            }
 
             if (working)
             {
@@ -186,7 +207,14 @@ namespace PhaseOptDcs
             // Process each stream in parallel
             Parallel.ForEach(config.Streams.Item, stream =>
             {
-                stream.Umrol.DataIn(stream.Composition.GetIds(), stream.Composition.GetScaledValues());
+                InputError err = InputError.Ok;
+                stream.Umrol.DataIn(stream.Composition.GetIds(), stream.Composition.GetScaledValues(), ref err);
+                if (err != InputError.Ok)
+                {
+                    logger.Error("Invalid composition {0}: {1}", stream.Name, err.ToString());
+                    return;
+                }
+
 
                 if (stream.FluidTune)
                 {
@@ -198,7 +226,11 @@ namespace PhaseOptDcs
                 {
                     try
                     {
-                        var res = stream.Umrol.Cricondenbar();
+                        var res = stream.Umrol.Cricondenbar(stream.Cricondenbar.Pressure.Value, stream.Cricondenbar.Temperature.Value);
+                        if (double.IsNaN(res.p) || double.IsNaN(res.t))
+                        {
+                            logger.Warn(CultureInfo.InvariantCulture, $"Cricondenbar calculation failed with initial values: P {stream.Cricondenbar.Pressure.Value}, T {stream.Cricondenbar.Temperature.Value}");
+                        }
                         stream.Cricondenbar.Pressure.Value = res.p;
                         stream.Cricondenbar.Temperature.Value = res.t;
                         logger.Debug(CultureInfo.InvariantCulture,

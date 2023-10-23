@@ -393,7 +393,9 @@ namespace Tests
         [TestMethod]
         public void Cricondenbar()
         {
-            PhaseOptDcs.Umrol umrol = new PhaseOptDcs.Umrol(ids, composition);
+            InputError err = InputError.Ok;
+            PhaseOptDcs.Umrol umrol = new PhaseOptDcs.Umrol(ids, composition, ref err);
+            Assert.AreEqual(err, InputError.Ok);
             PhaseOptDcs.Ccdb result = umrol.Cricondenbar(100.0, 258.0);
 
             double[] expected = { 102.70644183416010, -13.831775300562015 };
@@ -405,7 +407,9 @@ namespace Tests
         [TestMethod]
         public void Cricondentherm()
         {
-            PhaseOptDcs.Umrol umrol = new PhaseOptDcs.Umrol(ids, composition);
+            InputError err = InputError.Ok;
+            PhaseOptDcs.Umrol umrol = new PhaseOptDcs.Umrol(ids, composition, ref err);
+            Assert.AreEqual(err, InputError.Ok);
             PhaseOptDcs.Ccdb result = umrol.Cricondentherm(-1.0, -1.0);
 
             double[] expected = { 44.105980716914821, 21.327194366953904 };
@@ -417,7 +421,9 @@ namespace Tests
         [TestMethod]
         public void DropoutSearch()
         {
-            PhaseOptDcs.Umrol umrol = new PhaseOptDcs.Umrol(ids, composition);
+            InputError err = InputError.Ok;
+            PhaseOptDcs.Umrol umrol = new PhaseOptDcs.Umrol(ids, composition, ref err);
+            Assert.AreEqual(err, InputError.Ok);
 
             double wd = 2.5;
             double PMax = 102.88;
@@ -430,7 +436,9 @@ namespace Tests
         [TestMethod]
         public void DropoutSearch_Raw()
         {
-            PhaseOptDcs.Umrol umrol = new PhaseOptDcs.Umrol(ids, composition);
+            InputError err = InputError.Ok;
+            PhaseOptDcs.Umrol umrol = new PhaseOptDcs.Umrol(ids, composition, ref err);
+            Assert.AreEqual(err, InputError.Ok);
 
             double wd = 2.5;
             double PMax = 102.88;
@@ -443,7 +451,9 @@ namespace Tests
         [TestMethod]
         public void Dewp()
         {
-            PhaseOptDcs.Umrol umrol = new PhaseOptDcs.Umrol(ids, composition);
+            InputError err = InputError.Ok;
+            PhaseOptDcs.Umrol umrol = new PhaseOptDcs.Umrol(ids, composition, ref err);
+            Assert.AreEqual(err, InputError.Ok);
 
             double t = -7.5 + 273.15; 
             double p0 = 95.0;
@@ -456,7 +466,9 @@ namespace Tests
         [TestMethod]
         public void Dropout()
         {
-            PhaseOptDcs.Umrol umrol = new PhaseOptDcs.Umrol(ids, composition);
+            InputError err = InputError.Ok;
+            PhaseOptDcs.Umrol umrol = new PhaseOptDcs.Umrol(ids, composition, ref err);
+            Assert.AreEqual(err, InputError.Ok);
 
             double t = -7.5 + 273.15;
             double p = 91.0;
@@ -472,7 +484,9 @@ namespace Tests
         [TestMethod]
         public void TuneFluid()
         {
-            PhaseOptDcs.Umrol umrol = new PhaseOptDcs.Umrol(ids, composition);
+            InputError err = InputError.Ok;
+            PhaseOptDcs.Umrol umrol = new PhaseOptDcs.Umrol(ids, composition, ref err);
+            Assert.AreEqual(err, InputError.Ok);
             umrol.TuneFluid(100.0, 258.0);
             PhaseOptDcs.Ccdb result = umrol.Cricondenbar(100.0, 258.0);
 

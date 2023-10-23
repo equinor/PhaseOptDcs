@@ -19,6 +19,15 @@ namespace PhaseOptDcs
         public double ldov2;
     }
 
+    public enum InputError
+    {
+        Ok,
+        LengthsDiffer,
+        ComponentIsZero,
+        InvalidId,
+        DuplicatedId,
+    }
+
     internal class NativeMethods
     {
         [DllImport("umrol", EntryPoint = "umrol_new")]
@@ -28,7 +37,7 @@ namespace PhaseOptDcs
         internal static extern void UmrolFree(IntPtr umrol);
 
         [DllImport("umrol", EntryPoint = "umrol_data_in")]
-        internal static extern void UmrolDataIn(UmrolHandle umrol, int[] id, double[] composition, int size);
+        internal static extern void UmrolDataIn(UmrolHandle umrol, int[] id, double[] composition, int size, ref InputError err);
 
         [DllImport("umrol", EntryPoint = "umrol_cricondenbar")]
         internal static extern Ccdb UmrolCricondenbar(UmrolHandle umrol, double p0, double t0);
@@ -75,10 +84,10 @@ namespace PhaseOptDcs
         {
             umrol = NativeMethods.UmrolNew();
         }
-        public Umrol(int[] id, double[] composition)
+        public Umrol(int[] id, double[] composition, ref InputError err)
         {
             umrol = NativeMethods.UmrolNew();
-            DataIn(id, composition);
+            DataIn(id, composition, ref err);
         }
 
         ~Umrol()
@@ -86,11 +95,11 @@ namespace PhaseOptDcs
             Dispose(false);
         }
 
-        public void DataIn(int[] id, double[] composition)
+        public void DataIn(int[] id, double[] composition, ref InputError err)
         {
             int size = id.Length;
 
-            NativeMethods.UmrolDataIn(umrol, id, composition, size);
+            NativeMethods.UmrolDataIn(umrol, id, composition, size, ref err);
         }
 
         public Ccdb Cricondenbar(double p0 = -1.0, double t0 = -1.0)
