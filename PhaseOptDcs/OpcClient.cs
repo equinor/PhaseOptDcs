@@ -122,7 +122,7 @@ namespace PhaseOptDcs
         {
             if (e.Status != null && ServiceResult.IsNotGood(e.Status))
             {
-                logger.Info("{0} {1}/{2}", e.Status, sender.OutstandingRequestCount, sender.DefunctRequestCount);
+                logger.Warn("{0} {1}/{2}", e.Status, sender.OutstandingRequestCount, sender.DefunctRequestCount);
 
                 if (reconnectHandler == null)
                 {
