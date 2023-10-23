@@ -444,44 +444,47 @@ namespace PhaseOptDcs
 
         private void OnMonitoredItemNotification(MonitoredItem monitoredItem, MonitoredItemNotificationEventArgs e)
         {
-            try
+            lock (WorkerLock)
             {
-                MonitoredItemNotification notification = e.NotificationValue as MonitoredItemNotification;
-                logger.Debug(CultureInfo.InvariantCulture, "Subscription: {0}, Notification: {1} \"{2}\" Value = {3}", monitoredItem.Subscription.Id, notification.Message.SequenceNumber, monitoredItem.DisplayName, notification.Value);
-
-                if (notification != null)
+                try
                 {
-                    foreach (var stream in config.Streams.Item)
+                    MonitoredItemNotification notification = e.NotificationValue as MonitoredItemNotification;
+                    logger.Debug(CultureInfo.InvariantCulture, "Subscription: {0}, Notification: {1} \"{2}\" Value = {3}", monitoredItem.Subscription.Id, notification.Message.SequenceNumber, monitoredItem.DisplayName, notification.Value);
+
+                    if (notification != null)
                     {
-                        foreach (var comp in stream.Composition.Item)
+                        foreach (var stream in config.Streams.Item)
                         {
-                            if (string.IsNullOrEmpty(comp.NodeId)) { continue; }
-
-                            if (monitoredItem.StartNodeId.ToString() == comp.NodeId)
+                            foreach (var comp in stream.Composition.Item)
                             {
-                                comp.Value = Convert.ToDouble(notification.Value.Value);
-                            }
-                        }
+                                if (string.IsNullOrEmpty(comp.NodeId)) { continue; }
 
-                        foreach (var dropout in stream.LiquidDropouts.Item)
-                        {
-                            if (monitoredItem.StartNodeId.ToString() == dropout.Pressure.NodeId)
-                            {
-                                dropout.Pressure.Value = Convert.ToDouble(notification.Value.Value);
+                                if (monitoredItem.StartNodeId.ToString() == comp.NodeId)
+                                {
+                                    comp.Value = Convert.ToDouble(notification.Value.Value);
+                                }
                             }
 
-                            if (monitoredItem.StartNodeId.ToString() == dropout.Temperature.NodeId)
+                            foreach (var dropout in stream.LiquidDropouts.Item)
                             {
-                                dropout.Temperature.Value = Convert.ToDouble(notification.Value.Value);
-                            }
+                                if (monitoredItem.StartNodeId.ToString() == dropout.Pressure.NodeId)
+                                {
+                                    dropout.Pressure.Value = Convert.ToDouble(notification.Value.Value);
+                                }
 
+                                if (monitoredItem.StartNodeId.ToString() == dropout.Temperature.NodeId)
+                                {
+                                    dropout.Temperature.Value = Convert.ToDouble(notification.Value.Value);
+                                }
+
+                            }
                         }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "OnMonitoredItemNotification error");
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "OnMonitoredItemNotification error");
+                }
             }
         }
 
