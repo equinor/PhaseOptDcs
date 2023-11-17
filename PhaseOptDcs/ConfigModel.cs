@@ -32,6 +32,8 @@ namespace PhaseOptDcs
         [XmlElement]
         public double Interval { get; set; }
         [XmlElement]
+        public bool ReadOnly { get; set; }
+        [XmlElement]
         public StreamList Streams { get; set; } = new StreamList();
 
         public static ConfigModel ReadConfig(string file)

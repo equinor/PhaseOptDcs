@@ -406,6 +406,13 @@ namespace PhaseOptDcs
                     item.Value.Value);
             }
 
+            if (config.ReadOnly)
+            {
+                logger.Info("Read only mode active. No values written to OPC server.");
+                return;
+            }
+
+
             try
             {
                 opcClient.OpcSession.Write(null, wvc, out StatusCodeCollection results, out DiagnosticInfoCollection diagnosticInfos);

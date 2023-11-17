@@ -11,6 +11,7 @@
       <xsd:element type="xs:string" name="OpcPassword" minOccurs="0" />
       <xsd:element type="xs:anyURI" name="DefaultNamespaceURI" minOccurs="1" />
       <xsd:element type="xs:float" name="Interval" minOccurs="1" />
+      <xsd:element type="xs:boolean" name="ReadOnly" minOccurs="0" />
       <xsd:element type="StreamsType" name="Streams" minOccurs="1" />
     </xsd:all>
   </xsd:complexType>
