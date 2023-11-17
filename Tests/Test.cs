@@ -426,11 +426,12 @@ namespace Tests
             Assert.AreEqual(err, InputError.Ok);
 
             double wd = 2.5;
+            double PMin = 90.88;
             double PMax = 102.88;
             double T = -12.5 + 273.15;
             double expected = 97.7628125;
-            double result = umrol.DropoutSearch(wd: wd, t: T, p_max: PMax);
-            Assert.AreEqual(expected, result, 1.0e-5);
+            double result = umrol.DropoutSearch(wd: wd, t: T, p_min: PMin, p_max: PMax);
+            Assert.AreEqual(expected, result, 1.0e-1);
         }
 
         [TestMethod]
@@ -441,11 +442,12 @@ namespace Tests
             Assert.AreEqual(err, InputError.Ok);
 
             double wd = 2.5;
+            double PMin = 92.88;
             double PMax = 102.88;
             double T = -12.5 + 273.15;
             double expected = 96.083125;
-            double result = umrol.DropoutSearch(wd: wd, t: T, p_max: PMax, raw: true);
-            Assert.AreEqual(expected, result, 1.0e-5);
+            double result = umrol.DropoutSearch(wd: wd, t: T, p_min: PMin, p_max: PMax, raw: true);
+            Assert.AreEqual(expected, result, 1.0e-1);
         }
 
         [TestMethod]

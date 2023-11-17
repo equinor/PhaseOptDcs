@@ -265,11 +265,12 @@ namespace PhaseOptDcs
                 {
                     try
                     {
+                        logger.Debug(CultureInfo.InvariantCulture, "Stream: \"{0}\" Working point \"{1}\": Calculating dewp({2}, {3})", stream.Name, dropOut.Name, dropOut.Temperature.GetUMRConverted(), dropOut.DewPoint.Value);
                         dropOut.DewPoint.Value = stream.Umrol
                             .Dewp(dropOut.Temperature.GetUMRConverted(), dropOut.DewPoint.Value);
                         if (dropOut.DewPoint.Value == 1000.0)
                         {
-                            logger.Warn(CultureInfo.InvariantCulture, "Failed to calculate dew point. Retrying with no initial value.");
+                            logger.Warn(CultureInfo.InvariantCulture, "Stream: \"{0}\" Working point \"{1}\": Failed to calculate dew point. Retrying with no initial value.", stream.Name, dropOut.Name);
                             dropOut.DewPoint.Value = stream.Umrol
                                 .Dewp(dropOut.Temperature.GetUMRConverted(), -1.0);
                         }
@@ -287,6 +288,7 @@ namespace PhaseOptDcs
                         dropOut.DropoutPoint.Value = stream.Umrol
                             .DropoutSearch(dropOut.DropoutPoint.DropoutPercent,
                                 dropOut.Temperature.GetUMRConverted(),
+                                dropOut.DewPoint.GetUMRConverted() - 20.0,
                                 dropOut.DewPoint.GetUMRConverted(), raw: dropOut.Raw);
                         logger.Debug(CultureInfo.InvariantCulture,
                             "Stream: \"{0}\" Working point \"{1}\": Dropout point: Pressure {2} Unit: \"{3}\" Pressure NodeId: \"{4}\"",
@@ -612,6 +614,7 @@ namespace PhaseOptDcs
                     list.Add(dropout.DewPoint);
                     list.Add(dropout.DewPointMargin);
                     list.Add(dropout.DropoutPoint);
+                    list.Add(dropout.DropoutValue);
                 }
 
                 GenerateNodeIdString(list);
