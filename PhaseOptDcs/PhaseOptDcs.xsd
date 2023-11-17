@@ -63,6 +63,7 @@
       </xsd:simpleType>
     </xsd:attribute>
     <xsd:attribute type="xs:double" name="Value" use="optional" />
+    <xsd:attribute type="xs:double" name="InitialValue" use="optional" />
     <xsd:attribute type="xs:int" name="SamplingInterval" use="optional" />
   </xsd:attributeGroup>
 
@@ -122,6 +123,7 @@
       <xsd:element type="PressureType" name="DewPointMargin" maxOccurs="1" minOccurs="0" />
       <xsd:element type="PressureType" name="DewPoint" maxOccurs="1" minOccurs="0" />
       <xsd:element type="DropoutType" name="DropoutPoint" maxOccurs="1" minOccurs="0" />
+      <xsd:element type="DropoutValueType" name="DropoutValue" maxOccurs="1" minOccurs="0" />
       <xsd:element type="PressureType" name="DropoutPointMargin" maxOccurs="1" minOccurs="0" />
     </xsd:all>
     <xsd:attribute type="xs:string" name="Name" use="optional" />
@@ -143,7 +145,14 @@
         </xsd:attribute>
       </xsd:extension>
     </xsd:simpleContent>
+  </xsd:complexType>
 
+  <xsd:complexType name="DropoutValueType">
+    <xsd:simpleContent>
+      <xsd:extension base="xs:string">
+        <xsd:attributeGroup ref="MeasurementType" />
+      </xsd:extension>
+    </xsd:simpleContent>
   </xsd:complexType>
 
 

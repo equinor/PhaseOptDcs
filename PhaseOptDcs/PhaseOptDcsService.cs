@@ -229,31 +229,53 @@ namespace PhaseOptDcs
                     stream.Umrol.TuneFluid(0.0, 0.0);
                 }
 
+                // Cricondenbar
                 if (!string.IsNullOrEmpty(stream.Cricondenbar.Pressure.NodeId) ||
                     !string.IsNullOrEmpty(stream.Cricondenbar.Temperature.NodeId))
                 {
+                    stream.Cricondenbar.Pressure.Quality = StatusCodes.Bad;
+                    stream.Cricondenbar.Temperature.Quality = StatusCodes.Bad;
+
                     try
                     {
                         var res = stream.Umrol.Cricondenbar(stream.Cricondenbar.Pressure.Value, stream.Cricondenbar.Temperature.Value);
                         if (double.IsNaN(res.p) || double.IsNaN(res.t))
                         {
-                            logger.Warn(CultureInfo.InvariantCulture, $"Cricondenbar calculation failed with initial values: P {stream.Cricondenbar.Pressure.Value}, T {stream.Cricondenbar.Temperature.Value}");
+                            logger.Warn(CultureInfo.InvariantCulture, $"Cricondenbar calculation failed with values: P {stream.Cricondenbar.Pressure.Value}, T {stream.Cricondenbar.Temperature.Value}. Retrying with initial values.");
+                            res = stream.Umrol.Cricondenbar(stream.Cricondenbar.Pressure.InitialValue, stream.Cricondenbar.Temperature.InitialValue);
                         }
-                        stream.Cricondenbar.Pressure.Value = res.p;
-                        stream.Cricondenbar.Temperature.Value = res.t;
+                        if (double.IsNaN(res.p) || double.IsNaN(res.t))
+                        {
+                            logger.Warn(CultureInfo.InvariantCulture, $"Cricondenbar calculation failed with initial values: P {stream.Cricondenbar.Pressure.InitialValue}, T {stream.Cricondenbar.Temperature.InitialValue}. Retrying with no initial values.");
+                            res = stream.Umrol.Cricondenbar();
+                        }
+                        if (double.IsNaN(res.p) || double.IsNaN(res.t))
+                        {
+                            logger.Error(CultureInfo.InvariantCulture, $"Cricondenbar calculation failed");
+                        }
+                        else
+                        {
+                            stream.Cricondenbar.Pressure.Value = res.p;
+                            stream.Cricondenbar.Temperature.Value = res.t;
+                            stream.Cricondenbar.Pressure.Quality = StatusCodes.Good;
+                            stream.Cricondenbar.Temperature.Quality = StatusCodes.Good;
+                        }
+
                         logger.Debug(CultureInfo.InvariantCulture,
-                            "Stream: \"{0}\" Cricondenbar pressure Value: {1} Unit: \"{2}\" NodeId: \"{3}\"",
+                            "Stream: \"{0}\" Cricondenbar pressure Value: {1} Unit: \"{2}\" NodeId: \"{3}\" Quality \"{4}\"",
                             stream.Name,
                             stream.Cricondenbar.Pressure.GetUnitConverted(),
                             stream.Cricondenbar.Pressure.Unit,
-                            stream.Cricondenbar.Pressure.NodeId);
+                            stream.Cricondenbar.Pressure.NodeId,
+                            stream.Cricondenbar.Pressure.Quality);
 
                         logger.Debug(CultureInfo.InvariantCulture,
-                            "Stream: \"{0}\" Cricondenbar temperature Value: {1} Unit: \"{2}\" NodeId: \"{3}\"",
+                            "Stream: \"{0}\" Cricondenbar temperature Value: {1} Unit: \"{2}\" NodeId: \"{3}\" Quality \"{4}\"",
                             stream.Name,
                             stream.Cricondenbar.Temperature.GetUnitConverted(),
                             stream.Cricondenbar.Temperature.Unit,
-                            stream.Cricondenbar.Temperature.NodeId);
+                            stream.Cricondenbar.Temperature.NodeId,
+                            stream.Cricondenbar.Temperature.Quality);
                     }
                     catch (System.ComponentModel.Win32Exception e)
                     {
@@ -261,41 +283,70 @@ namespace PhaseOptDcs
                     }
                 }
 
+                // Liquid dropouts
                 foreach (var dropOut in stream.LiquidDropouts.Item)
                 {
+                    dropOut.DewPoint.Quality = StatusCodes.Bad;
+                    dropOut.DewPointMargin.Quality = StatusCodes.Bad;
+                    dropOut.DropoutPoint.Quality = StatusCodes.Bad;
+
                     try
                     {
                         logger.Debug(CultureInfo.InvariantCulture, "Stream: \"{0}\" Working point \"{1}\": Calculating dewp({2}, {3})", stream.Name, dropOut.Name, dropOut.Temperature.GetUMRConverted(), dropOut.DewPoint.Value);
-                        dropOut.DewPoint.Value = stream.Umrol
-                            .Dewp(dropOut.Temperature.GetUMRConverted(), dropOut.DewPoint.Value);
-                        if (dropOut.DewPoint.Value == 1000.0)
+                        double dewpoint = stream.Umrol.Dewp(dropOut.Temperature.GetUMRConverted(), dropOut.DewPoint.Value);
+                        if (dewpoint == 1000.0 || dewpoint < 5.0)
                         {
-                            logger.Warn(CultureInfo.InvariantCulture, "Stream: \"{0}\" Working point \"{1}\": Failed to calculate dew point. Retrying with no initial value.", stream.Name, dropOut.Name);
-                            dropOut.DewPoint.Value = stream.Umrol
-                                .Dewp(dropOut.Temperature.GetUMRConverted(), -1.0);
+                            logger.Warn(CultureInfo.InvariantCulture, "Stream: \"{0}\" Working point \"{1}\": Failed to calculate dew point. Retrying with initial value.", stream.Name, dropOut.Name);
+                            dewpoint = stream.Umrol.Dewp(dropOut.Temperature.GetUMRConverted(), dropOut.DewPoint.InitialValue);
                         }
+                        if (dewpoint == 1000.0 || dewpoint < 5.0)
+                        {
+                            logger.Error(CultureInfo.InvariantCulture, "Stream: \"{0}\" Working point \"{1}\": Failed to calculate dew point.", stream.Name, dropOut.Name);
+                        }
+                        else
+                        {
+                            dropOut.DewPoint.Value = dewpoint;
+                            dropOut.DewPoint.Quality = StatusCodes.Good;
+                            dropOut.DewPointMargin.Quality = StatusCodes.Good;
+                        }
+
                         logger.Debug(CultureInfo.InvariantCulture,
-                            "Stream: \"{0}\" Working point \"{1}\": Dew point: Pressure: {2} Unit: \"{3}\" Pressure NodeId: \"{4}\"",
+                            "Stream: \"{0}\" Working point \"{1}\": Dew point: Pressure: {2} Unit: \"{3}\" Pressure NodeId: \"{4}\" Quality \"{5}\"",
                             stream.Name, dropOut.Name,
                             dropOut.DewPoint.GetUnitConverted(),
                             dropOut.DewPoint.Unit,
-                            dropOut.DewPoint.NodeId);
+                            dropOut.DewPoint.NodeId,
+                            dropOut.DewPoint.Quality);
                         logger.Debug(CultureInfo.InvariantCulture,
-                            "Stream: \"{0}\" Working point \"{1}\": Dew point margin: {2} NodeId: \"{3}\"",
+                            "Stream: \"{0}\" Working point \"{1}\": Dew point margin: {2} NodeId: \"{3}\" Quality \"{4}\"",
                             stream.Name, dropOut.Name,
-                            dropOut.GetDewPointMargin(), dropOut.DewPointMargin.NodeId);
+                            dropOut.GetDewPointMargin(), dropOut.DewPointMargin.NodeId, dropOut.DewPoint.Quality);
 
-                        dropOut.DropoutPoint.Value = stream.Umrol
+                        double p_max = 300.0;
+                        double p_min = 10.0;
+                        if (dewpoint != 1000.0 && dewpoint > 5.0)
+                        {
+                            p_max = dewpoint;
+                        }
+
+                        double dropout_pressure = stream.Umrol
                             .DropoutSearch(dropOut.DropoutPoint.DropoutPercent,
                                 dropOut.Temperature.GetUMRConverted(),
-                                dropOut.DewPoint.GetUMRConverted() - 20.0,
-                                dropOut.DewPoint.GetUMRConverted(), raw: dropOut.Raw);
+                                p_min,
+                                p_max, raw: dropOut.Raw);
+                        if (dropout_pressure > 0)
+                        {
+                            dropOut.DropoutPoint.Value = dropout_pressure;
+                            dropOut.DropoutPoint.Quality = StatusCodes.Good;
+                        }
+                        
                         logger.Debug(CultureInfo.InvariantCulture,
-                            "Stream: \"{0}\" Working point \"{1}\": Dropout point: Pressure {2} Unit: \"{3}\" Pressure NodeId: \"{4}\"",
+                            "Stream: \"{0}\" Working point \"{1}\": Dropout point: Pressure {2} Unit: \"{3}\" Pressure NodeId: \"{4}\"Quality \"{5}\"",
                             stream.Name, dropOut.Name,
                             dropOut.DropoutPoint.GetUnitConverted(),
                             dropOut.DropoutPoint.Unit,
-                            dropOut.DropoutPoint.NodeId);
+                            dropOut.DropoutPoint.NodeId,
+                            dropOut.DropoutPoint.Quality);
                         logger.Debug(CultureInfo.InvariantCulture,
                             "Stream: \"{0}\" Working point \"{1}\": Dropout point margin: {2} NodeId: \"{3}\"",
                             stream.Name, dropOut.Name,
@@ -334,7 +385,7 @@ namespace PhaseOptDcs
 
             foreach (var stream in config.Streams.Item)
             {
-                if (!string.IsNullOrEmpty(stream.Cricondenbar.Pressure.NodeId) && stream.Cricondenbar.Pressure.IsValid())
+                if (!string.IsNullOrEmpty(stream.Cricondenbar.Pressure.NodeId) && stream.Cricondenbar.Pressure.IsValid() && StatusCode.IsGood(stream.Cricondenbar.Pressure.Quality))
                 {
                     wvc.Add(new WriteValue
                     {
@@ -344,7 +395,7 @@ namespace PhaseOptDcs
                     });
                 }
 
-                if (!string.IsNullOrEmpty(stream.Cricondenbar.Temperature.NodeId) && stream.Cricondenbar.Temperature.IsValid())
+                if (!string.IsNullOrEmpty(stream.Cricondenbar.Temperature.NodeId) && stream.Cricondenbar.Temperature.IsValid() && StatusCode.IsGood(stream.Cricondenbar.Temperature.Quality))
                 {
 
                     wvc.Add(new WriteValue
@@ -357,7 +408,7 @@ namespace PhaseOptDcs
 
                 foreach (var dropout in stream.LiquidDropouts.Item)
                 {
-                    if (!string.IsNullOrEmpty(dropout.DewPointMargin.NodeId))
+                    if (!string.IsNullOrEmpty(dropout.DewPointMargin.NodeId) && StatusCode.IsGood(dropout.DewPointMargin.Quality))
                     {
                         wvc.Add(new WriteValue
                         {
@@ -367,7 +418,7 @@ namespace PhaseOptDcs
                         });
                     }
 
-                    if (!string.IsNullOrEmpty(dropout.DewPoint.NodeId))
+                    if (!string.IsNullOrEmpty(dropout.DewPoint.NodeId) && StatusCode.IsGood(dropout.DewPoint.Quality))
                     {
                         wvc.Add(new WriteValue
                         {
@@ -377,7 +428,7 @@ namespace PhaseOptDcs
                         });
                     }
 
-                    if (!string.IsNullOrEmpty(dropout.DropoutPointMargin.NodeId))
+                    if (!string.IsNullOrEmpty(dropout.DropoutPointMargin.NodeId) && StatusCode.IsGood(dropout.DropoutPointMargin.Quality))
                     {
                         wvc.Add(new WriteValue
                         {
@@ -387,7 +438,7 @@ namespace PhaseOptDcs
                         });
                     }
 
-                    if (!string.IsNullOrEmpty(dropout.DropoutPoint.NodeId))
+                    if (!string.IsNullOrEmpty(dropout.DropoutPoint.NodeId) && StatusCode.IsGood(dropout.DropoutPoint.Quality))
                     {
                         wvc.Add(new WriteValue
                         {
@@ -397,7 +448,7 @@ namespace PhaseOptDcs
                         });
                     }
 
-                    if (!string.IsNullOrEmpty(dropout.DropoutValue.NodeId))
+                    if (!string.IsNullOrEmpty(dropout.DropoutValue.NodeId) && StatusCode.IsGood(dropout.DropoutValue.Quality))
                     {
                         wvc.Add(new WriteValue
                         {

@@ -158,10 +158,12 @@ namespace PhaseOptDcs
         [XmlAttribute]
         public double Value { get; set; }
         [XmlAttribute]
+        public double InitialValue { get; set; }
+        [XmlAttribute]
         public int SamplingInterval { get; set; } = -2;
 
         [XmlIgnore]
-        public StatusCode Quality { get; set; }
+        public StatusCode Quality { get; set; } = StatusCodes.Bad;
 
         [XmlIgnore]
         public string NodeId { get; set; }
