@@ -17,6 +17,7 @@ namespace PhaseOptDcs
         private readonly OpcClient opcClient;
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private readonly object WorkerLock = new();
+        private readonly object LoggerLock = new();
         private bool working = false;
         private Subscription subscription;
 
@@ -207,12 +208,19 @@ namespace PhaseOptDcs
             // Process each stream in parallel
             Parallel.ForEach(config.Streams.Item, stream =>
             {
-                InputError err = InputError.Ok;
-                stream.Umrol.DataIn(stream.Composition.GetIds(), stream.Composition.GetScaledValues(), ref err);
-                if (err != InputError.Ok)
+                lock (LoggerLock)
                 {
-                    logger.Error("Invalid composition {0}: {1}", stream.Name, err.ToString());
-                    return;
+                    foreach (Component comp in stream.Composition.Item)
+                    {
+                        logger.Debug(CultureInfo.InvariantCulture, $"Stream \"{stream.Name}\" {comp.Name} {comp.GetScaledValue()}");
+                    }
+                    InputError err = InputError.Ok;
+                    stream.Umrol.DataIn(stream.Composition.GetIds(), stream.Composition.GetScaledValues(), ref err);
+                    if (err != InputError.Ok)
+                    {
+                        logger.Error("Invalid composition {0}: {1}", stream.Name, err.ToString());
+                        return;
+                    }
                 }
 
 
