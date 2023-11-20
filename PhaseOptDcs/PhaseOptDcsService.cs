@@ -60,6 +60,7 @@ namespace PhaseOptDcs
             GenerateNodeIds();
             timer.Start();
 
+            // Create subscription
             subscription = new Subscription(opcClient.OpcSession.DefaultSubscription)
             {
                 DisplayName = "PhaseOptDcs",
@@ -72,6 +73,7 @@ namespace PhaseOptDcs
             subscription.Create();
             logger.Info("Subscription created with SubscriptionId = {0}", subscription.Id);
 
+            // Add monitored items to subscription
             foreach (var stream in config.Streams.Item)
             {
                 foreach (var component in stream.Composition.Item)
@@ -188,8 +190,7 @@ namespace PhaseOptDcs
             }
 
             watch.Stop();
-            logger.Debug(CultureInfo.InvariantCulture, "Worker elapsed time: {0} ms.", watch.ElapsedMilliseconds);
-
+            
             if (timer.Interval > config.Interval)
             {
                 timer.Interval *= 0.99;
@@ -200,7 +201,7 @@ namespace PhaseOptDcs
                 }
             }
 
-            logger.Debug(CultureInfo.InvariantCulture, "Worker done.");
+            logger.Debug(CultureInfo.InvariantCulture, "Worker done. Elapsed time: {0} ms.", watch.ElapsedMilliseconds);
         }
 
         private void ProcessStreams()
@@ -238,15 +239,18 @@ namespace PhaseOptDcs
 
                     try
                     {
+                        logger.Debug(CultureInfo.InvariantCulture, "Calculating Cricondenbar({0}, {1})", stream.Cricondenbar.Pressure.Value, stream.Cricondenbar.Temperature.Value);
                         var res = stream.Umrol.Cricondenbar(stream.Cricondenbar.Pressure.Value, stream.Cricondenbar.Temperature.Value);
                         if (double.IsNaN(res.p) || double.IsNaN(res.t))
                         {
                             logger.Warn(CultureInfo.InvariantCulture, $"Cricondenbar calculation failed with values: P {stream.Cricondenbar.Pressure.Value}, T {stream.Cricondenbar.Temperature.Value}. Retrying with initial values.");
+                            logger.Debug(CultureInfo.InvariantCulture, "Calculating Cricondenbar({0}, {1})", stream.Cricondenbar.Pressure.InitialValue, stream.Cricondenbar.Temperature.InitialValue);
                             res = stream.Umrol.Cricondenbar(stream.Cricondenbar.Pressure.InitialValue, stream.Cricondenbar.Temperature.InitialValue);
                         }
                         if (double.IsNaN(res.p) || double.IsNaN(res.t))
                         {
                             logger.Warn(CultureInfo.InvariantCulture, $"Cricondenbar calculation failed with initial values: P {stream.Cricondenbar.Pressure.InitialValue}, T {stream.Cricondenbar.Temperature.InitialValue}. Retrying with no initial values.");
+                            logger.Debug(CultureInfo.InvariantCulture, "Calculating Cricondenbar({0}, {1})", -1, -1);
                             res = stream.Umrol.Cricondenbar();
                         }
                         if (double.IsNaN(res.p) || double.IsNaN(res.t))
@@ -473,7 +477,7 @@ namespace PhaseOptDcs
                 return;
             }
 
-
+            // Write values to OPC server
             try
             {
                 opcClient.OpcSession.Write(null, wvc, out StatusCodeCollection results, out DiagnosticInfoCollection diagnosticInfos);
@@ -571,7 +575,7 @@ namespace PhaseOptDcs
 
                 if (!string.IsNullOrEmpty(m.Identifier) && !string.IsNullOrEmpty(m.RelativePath))
                 {
-                    logger.Warn(CultureInfo.InvariantCulture, "Identifier \"{0}\" and RelativePath \"{1}\" defined for \"{2}\". Identifier will be used and RelativePath will be ignored.", m.Identifier, m.RelativePath, "placeholder");
+                    logger.Warn(CultureInfo.InvariantCulture, "Identifier \"{0}\" and RelativePath \"{1}\" defined for \"{2}\". Identifier will be used and RelativePath will be ignored.", m.Identifier, m.RelativePath, m.Name);
                 }
 
                 string namespaceURI = config.DefaultNamespaceURI;
