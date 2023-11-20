@@ -29,6 +29,7 @@
       <xsd:element type="LiquidDropoutType" name="LiquidDropouts" ></xsd:element>
     </xsd:all>
     <xsd:attribute type="xs:string" name="Name" use="optional" />
+    <xsd:attribute type="xs:boolean" name="FluidTune" use="optional"></xsd:attribute>
   </xsd:complexType>
 
   <xsd:complexType name="CompositionType">

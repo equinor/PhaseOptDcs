@@ -227,7 +227,8 @@ namespace PhaseOptDcs
 
                 if (stream.FluidTune)
                 {
-                    stream.Umrol.TuneFluid(0.0, 0.0);
+                    logger.Debug(CultureInfo.InvariantCulture, "Tuning composition for Stream \"{0}\"", stream.Name);
+                    stream.Umrol.TuneFluid(stream.Cricondenbar.Pressure.Value, stream.Cricondenbar.Temperature.Value);
                 }
 
                 // Cricondenbar
@@ -509,6 +510,7 @@ namespace PhaseOptDcs
                 logger.Info("Disconnecting from OPC server.");
 
                 subscription.Delete(true);
+                opcClient.OpcSession.RemoveSubscription(subscription);
                 opcClient.DisConnect();
             }
             logger.Info("Stopping service.");
