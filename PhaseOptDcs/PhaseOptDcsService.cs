@@ -213,7 +213,7 @@ namespace PhaseOptDcs
                 {
                     foreach (Component comp in stream.Composition.Item)
                     {
-                        logger.Debug(CultureInfo.InvariantCulture, $"Stream \"{stream.Name}\" {comp.Name} {comp.GetScaledValue()}");
+                        logger.Debug(CultureInfo.InvariantCulture, "Stream \"{0}\" {1} {2}", stream.Name, comp.Name, comp.GetScaledValue());
                     }
                     InputError err = InputError.Ok;
                     stream.Umrol.DataIn(stream.Composition.GetIds(), stream.Composition.GetScaledValues(), ref err);
@@ -244,19 +244,19 @@ namespace PhaseOptDcs
                         var res = stream.Umrol.Cricondenbar(stream.Cricondenbar.Pressure.Value, stream.Cricondenbar.Temperature.Value);
                         if (double.IsNaN(res.p) || double.IsNaN(res.t))
                         {
-                            logger.Warn(CultureInfo.InvariantCulture, $"Cricondenbar calculation failed with values: P {stream.Cricondenbar.Pressure.Value}, T {stream.Cricondenbar.Temperature.Value}. Retrying with initial values.");
+                            logger.Warn(CultureInfo.InvariantCulture, "Cricondenbar calculation failed with values: P {0}, T {1}. Retrying with initial values.", stream.Cricondenbar.Pressure.Value, stream.Cricondenbar.Temperature.Value);
                             logger.Debug(CultureInfo.InvariantCulture, "Calculating Cricondenbar({0}, {1})", stream.Cricondenbar.Pressure.InitialValue, stream.Cricondenbar.Temperature.InitialValue);
                             res = stream.Umrol.Cricondenbar(stream.Cricondenbar.Pressure.InitialValue, stream.Cricondenbar.Temperature.InitialValue);
                         }
                         if (double.IsNaN(res.p) || double.IsNaN(res.t))
                         {
-                            logger.Warn(CultureInfo.InvariantCulture, $"Cricondenbar calculation failed with initial values: P {stream.Cricondenbar.Pressure.InitialValue}, T {stream.Cricondenbar.Temperature.InitialValue}. Retrying with no initial values.");
+                            logger.Warn(CultureInfo.InvariantCulture, "Cricondenbar calculation failed with initial values: P {0}, T {1}. Retrying with no initial values.", stream.Cricondenbar.Pressure.InitialValue, stream.Cricondenbar.Temperature.InitialValue);
                             logger.Debug(CultureInfo.InvariantCulture, "Calculating Cricondenbar({0}, {1})", -1, -1);
                             res = stream.Umrol.Cricondenbar();
                         }
                         if (double.IsNaN(res.p) || double.IsNaN(res.t))
                         {
-                            logger.Error(CultureInfo.InvariantCulture, $"Cricondenbar calculation failed");
+                            logger.Error(CultureInfo.InvariantCulture, "Cricondenbar calculation failed");
                         }
                         else
                         {
