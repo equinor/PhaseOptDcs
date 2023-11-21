@@ -190,7 +190,7 @@ namespace PhaseOptDcs
             }
 
             watch.Stop();
-            
+
             if (timer.Interval > config.Interval)
             {
                 timer.Interval *= 0.99;
@@ -344,7 +344,7 @@ namespace PhaseOptDcs
                             dropOut.DropoutPoint.Value = dropout_pressure;
                             dropOut.DropoutPoint.Quality = StatusCodes.Good;
                         }
-                        
+
                         logger.Debug(CultureInfo.InvariantCulture,
                             "Stream: \"{0}\" Working point \"{1}\": Dropout point: Pressure {2} Unit: \"{3}\" Pressure NodeId: \"{4}\"Quality \"{5}\"",
                             stream.Name, dropOut.Name,

@@ -122,7 +122,7 @@ namespace PhaseOptDcs
             return NativeMethods.UmrolVpl(umrol, t, p);
         }
 
-        public double DropoutSearch(double wd, double t, double p_min,double p_max, double limit = 1.0e-2, int max_itr = 25, bool raw = false)
+        public double DropoutSearch(double wd, double t, double p_min, double p_max, double limit = 1.0e-2, int max_itr = 25, bool raw = false)
         {
             return NativeMethods.UmrolDropoutSearch(umrol, wd, t, p_min, p_max, limit, max_itr, raw);
         }

@@ -188,7 +188,8 @@ namespace PhaseOptDcs
         [XmlElement]
         public TemperatureMeasurement Temperature { get; set; } = new TemperatureMeasurement();
 
-        public object GetTemperature() {
+        public object GetTemperature()
+        {
             if (Temperature.Type == "single")
             {
                 return Convert.ToSingle(Temperature.GetUnitConverted());
@@ -478,7 +479,7 @@ namespace PhaseOptDcs
         }
     }
 
-    public class DropoutMeasurement: PressureMeasurement
+    public class DropoutMeasurement : PressureMeasurement
     {
         [XmlAttribute]
         public double DropoutPercent { get; set; }
